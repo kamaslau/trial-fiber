@@ -5,9 +5,12 @@
 需要确保系统中已安装 [Golang](https://go.dev/) 。
 
 ```bash
+# 创建环境配置文件
+cp .env_template .env
+
 # 初始化
 go mod init trial-fiber
-go get github.com/gofiber/fiber/v2
+go get github.com/gofiber/fiber/v3
 
 # 开发
 go fmt main.go
