@@ -4,7 +4,7 @@
 
 需要确保系统中已安装 [Golang](https://go.dev/) 。
 
-```
+```bash
 # 初始化
 go mod init trial-fiber
 go get github.com/gofiber/fiber/v2
@@ -18,4 +18,10 @@ go build
 
 # 部署
 go run trial-fiber
+```
+
+## 中国大陆镜像
+
+```bash
+go env -w GOPROXY=https://goproxy.io,direct // 官方镜像
 ```
