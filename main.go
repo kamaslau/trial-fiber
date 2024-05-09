@@ -21,7 +21,7 @@ func main() {
 	// Load env variable(s)
 	loadEnv()
 	port := "3000"
-	fmt.Printf("env.PORT: %s",os.Getenv("PORT"))
+	fmt.Printf("env.PORT: %s", os.Getenv("PORT"))
 	if strings.Count(os.Getenv("PORT"), "") > 0 {
 		port = os.Getenv("PORT")
 	}

@@ -16,3 +16,6 @@
 
 # Env files
 .env
+
+# Misc
+*.zip

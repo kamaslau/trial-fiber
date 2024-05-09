@@ -8,9 +8,12 @@
 # 创建环境配置文件
 cp .env_template .env
 
+# 更新依赖项
+go mod tidy
+
 # 初始化
 go mod init trial-fiber
-go get github.com/gofiber/fiber/v3
+go get
 
 # 开发
 go fmt main.go
