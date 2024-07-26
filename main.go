@@ -32,5 +32,8 @@ func main() {
 		return c.SendString("Hello, World!")
 	})
 
-	app.Listen(fmt.Sprintf(":%s", port))
+	err := app.Listen(fmt.Sprintf(":%s", port))
+	if err != nil {
+		fmt.Println("Error trying to launching fiber: ", err)
+	}
 }
