@@ -32,6 +32,11 @@ func main() {
 		return c.SendString("Hello, World!")
 	})
 
+	app.Get("posts", func(c fiber.Ctx) error {
+		response := fiber.Map{"title": "Post No.1", "content": "This would be an article."}
+		return c.JSON(response)
+	})
+
 	err := app.Listen(fmt.Sprintf(":%s", port))
 	if err != nil {
 		fmt.Println("Error trying to launching fiber: ", err)
