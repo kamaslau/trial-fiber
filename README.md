@@ -4,30 +4,33 @@
 
 需要确保系统中已安装 [Golang](https://go.dev/) 。
 
+## Usage
+
 ```bash
-# 创建环境配置文件
+# Create .env file
 cp .env_template .env
 
-# 更新依赖项
-go mod tidy
-
-# 初始化
-go mod init trial-fiber
+# Install dependencies
 go get
 
-# 开发
-go fmt main.go
-go run main.go
+# Update dependencies
+go get ./...
+go mod tidy
 
-# 编译
+# Run
+go run .
+
+# Compile
 go build
-
-# 部署
-go run trial-fiber
 ```
 
-## 中国大陆镜像
+## [Optional] Setup Mirror for Mainland China
+
+You can skip this one if not approaching the internet from within mainland China.
 
 ```bash
-go env -w GOPROXY=https://goproxy.io,direct // 官方镜像
+go env -w GOPROXY=https://goproxy.io,direct # 官方
+go env -w GOPROXY=https://goproxy.cn,direct # 七牛云
+
+go env GOPROXY # 确认信息
 ```
