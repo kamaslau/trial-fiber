@@ -18,6 +18,10 @@ go get ./...
 go mod tidy
 
 # Run
+## With live-reloading (air)
+go install github.com/air-verse/air@latest
+
+## Without live-reloading
 go run .
 
 # Compile

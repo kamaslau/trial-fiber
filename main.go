@@ -44,6 +44,7 @@ func main() {
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
+	app.Get("post", handlers.Post)
 	app.Get("posts", handlers.Posts)
 
 	startUp(app)
