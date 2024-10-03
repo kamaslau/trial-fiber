@@ -44,8 +44,13 @@ func main() {
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
-	app.Get("post", handlers.Post)
-	app.Get("posts", handlers.Posts)
+
+	// RESTful
+	app.Get("/post/:id", handlers.Post)
+	app.Get("/posts", handlers.Posts)
+
+	// TODO GraphQL
+	app.Get("/graphql", handlers.Posts) // TODO Placeholder
 
 	startUp(app)
 }
