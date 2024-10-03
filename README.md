@@ -19,7 +19,8 @@ go mod tidy
 
 # Run
 ## With live-reloading (air)
-go install github.com/air-verse/air@latest
+go install github.com/air-verse/air@latest # This line only needs to be run once
+air
 
 ## Without live-reloading
 go run .
