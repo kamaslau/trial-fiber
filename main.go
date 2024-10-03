@@ -8,6 +8,9 @@ import (
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/joho/godotenv"
+
+	// Local packages
+	"trial-fiber/handlers"
 )
 
 var port = "3000"
@@ -19,26 +22,29 @@ func loadEnv() {
 	}
 }
 
-func main() {
-	loadEnv() // Load env variable(s)
+func startUp(app *fiber.App) {
 	fmt.Printf("env.PORT: %s", os.Getenv("PORT"))
-
-	app := fiber.New()
-
-	app.Get("/", func(c fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
-
-	app.Get("posts", func(c fiber.Ctx) error {
-		response := fiber.Map{"title": "Post No.1", "content": "This would be an article."}
-		return c.JSON(response)
-	})
 
 	if strings.Count(os.Getenv("PORT"), "") > 0 {
 		port = os.Getenv("PORT")
 	}
+
 	err := app.Listen(fmt.Sprintf(":%s", port))
 	if err != nil {
 		fmt.Println("Error trying to launching fiber: ", err)
 	}
+}
+
+func main() {
+	loadEnv() // Load env variable(s)
+
+	app := fiber.New()
+
+	// Routers
+	app.Get("/", func(c fiber.Ctx) error {
+		return c.SendString("Hello, World!")
+	})
+	app.Get("posts", handlers.Posts)
+
+	startUp(app)
 }
