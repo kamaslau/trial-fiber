@@ -10,7 +10,8 @@ import (
 	"github.com/joho/godotenv"
 
 	// Local packages
-	"trial-fiber/handlers"
+	"github.com/kamaslau/trial-fiber/handlers"
+	"github.com/kamaslau/trial-fiber/models"
 )
 
 var port = "3000"
@@ -39,6 +40,8 @@ func main() {
 	loadEnv() // Load env variable(s)
 
 	app := fiber.New()
+
+	models.Connect()
 
 	// Routers
 	app.Get("/", func(c fiber.Ctx) error {

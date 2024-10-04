@@ -8,7 +8,7 @@
 
 ```bash
 # Create .env file
-cp .env_template .env
+cp .env_template .env # specify database connection info
 
 # Install dependencies
 go get
