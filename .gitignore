@@ -18,6 +18,7 @@
 .env
 
 # Misc
+tmp
 *.zip
 
 # IDEs
