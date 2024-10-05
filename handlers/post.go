@@ -13,7 +13,7 @@ func Find(c fiber.Ctx) error {
 	var data []models.Post
 	models.DBClient.Find(&data)
 	if len(data) == 0 {
-		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No data"})
+		return c.Status(404).JSON(ResNotFound)
 	}
 
 	response := fiber.Map{"data": data}
@@ -29,7 +29,7 @@ func FindOne(c fiber.Ctx) error {
 	conditions := map[string]interface{}{"ID": id}
 	models.DBClient.Where(conditions).First(&data)
 	if data.ID == 0 {
-		return c.Status(404).JSON(fiber.Map{"status": "error", "message": "No data"})
+		return c.Status(404).JSON(ResNotFound)
 	}
 
 	response := fiber.Map{"data": data}
