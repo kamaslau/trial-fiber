@@ -38,16 +38,12 @@ func startUp(app *fiber.App) {
 func main() {
 	loadEnv() // Load env variable(s)
 
-	app := fiber.New()
-
 	models.ConnectDB()
 
-	// Routers
-	app.Get("/", func(c fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	app := fiber.New()
 
 	// RESTful
+	app.Get("/", routes.Root)
 	routes.InitPostRoutes(app)
 
 	// TODO GraphQL
