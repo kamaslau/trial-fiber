@@ -40,6 +40,15 @@ go run .
 go build
 ```
 
+## Deploy with docker
+```bash
+docker build . -t trial-fiber:latest
+
+docker stop trial-fiber && \
+docker rm trial-fiber && \
+docker run --name trial-fiber -p 3000:3000 -d --restart always trial-fiber:latest
+```
+
 ## References/Credits
 
 - [Go Fiber: Start Building RESTful APIs on Golang (Feat. GORM)](https://dev.to/percoguru/getting-started-with-apis-in-golang-feat-fiber-and-gorm-2n34)
