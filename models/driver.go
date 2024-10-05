@@ -2,10 +2,10 @@ package models
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"os"
 	"strconv"
 
+	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -30,13 +30,14 @@ func ConnectDB() {
 	if err != nil {
 		panic("failed to migrate database: " + err.Error())
 	}
+
 }
 
 // logOnConnected 写日志：数据库连接成功时
 func logOnConnected() {
 	var payload = Post{
 		UUID:    uuid.NewString(),
-		Title:   "DB connected",
+		Name:    "DB connected",
 		Content: "This is an auto generated message on database connection succeed.",
 	}
 	result := DBClient.Create(&payload)
