@@ -24,14 +24,13 @@ func ConnectDB() {
 	fmt.Println("DB connected")
 	DBClient = db
 
-	logOnConnected()
-
 	//https://gorm.io/docs/migration.html#Auto-Migration
 	err = DBClient.AutoMigrate(&Post{})
 	if err != nil {
 		panic("failed to migrate database: " + err.Error())
 	}
 
+	logOnConnected()
 }
 
 // logOnConnected 写日志：数据库连接成功时
