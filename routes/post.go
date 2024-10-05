@@ -12,5 +12,5 @@ func InitPostRoutes(router fiber.Router) {
 	route.Get("/:id", handlers.FindOne)
 	route.Post("/", handlers.Create)
 	route.Put("/:id", handlers.Update)
-	route.Delete("/:id", handlers.Update)
+	route.Delete("/:id", handlers.Delete)
 }

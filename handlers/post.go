@@ -59,6 +59,14 @@ func Create(c fiber.Ctx) error {
 func Update(c fiber.Ctx) error {
 	fmt.Println("Update: ")
 
-	response := fiber.Map{"title": "Post No.1", "content": "This would be some articles."}
+	response := fiber.Map{"title": "Update", "content": "This would be an update op."}
+	return c.JSON(response)
+}
+
+// TODO
+func Delete(c fiber.Ctx) error {
+	fmt.Println("Delete: ")
+
+	response := fiber.Map{"title": "Delete", "content": "This would be an delete op."}
 	return c.JSON(response)
 }
