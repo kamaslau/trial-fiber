@@ -41,7 +41,7 @@ func main() {
 
 	app := fiber.New()
 
-	models.Connect()
+	models.ConnectDB()
 
 	// Routers
 	app.Get("/", func(c fiber.Ctx) error {
