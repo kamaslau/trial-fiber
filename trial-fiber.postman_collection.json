@@ -1,0 +1,34 @@
+{
+	"info": {
+		"_postman_id": "aa468e88-346e-4915-aecb-060105b13b24",
+		"name": "trial-fiber",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2058963"
+	},
+	"item": [
+		{
+			"name": "post",
+			"item": [
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/post/82",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"post",
+								"82"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

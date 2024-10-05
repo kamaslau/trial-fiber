@@ -63,10 +63,25 @@ func Update(c fiber.Ctx) error {
 	return c.JSON(response)
 }
 
-// TODO
 func Delete(c fiber.Ctx) error {
-	fmt.Println("Delete: ")
+	var id = c.Params("id")
+	fmt.Printf("Delete: id=%s", id)
 
-	response := fiber.Map{"title": "Delete", "content": "This would be an delete op."}
-	return c.JSON(response)
+	conditions := map[string]interface{}{"ID": id}
+
+	// Lookup Target(s)
+	var data []models.Post
+	models.DBClient.Where(conditions).Find(&data) // No need to add 'deleted_at is null', GORM adds it by default with gorm.Model from type
+	if len(data) == 0 {
+		return c.Status(404).JSON(ResNotFound)
+	}
+
+	// Do
+	result := models.DBClient.Where(conditions).Delete(&models.Post{})
+	if result.RowsAffected != 1 {
+		fmt.Println(result.Error)
+		return c.Status(500).JSON(fiber.Map{"succeed": "no", "message": "Failed to delete note"})
+	}
+
+	return c.JSON(fiber.Map{"succeed": "yes"})
 }
