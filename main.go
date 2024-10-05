@@ -42,12 +42,7 @@ func main() {
 
 	app := fiber.New()
 
-	// RESTful
-	app.Get("/", routes.Root)
-	routes.InitPostRoutes(app)
-
-	// TODO GraphQL
-	app.Post("/graphql", routes.GraphQL)
+	routes.InitRoutes(app)
 
 	startUp(app)
 }

@@ -39,3 +39,7 @@ go run .
 # Compile
 go build
 ```
+
+## References/Credits
+
+- [Go Fiber: Start Building RESTful APIs on Golang (Feat. GORM)](https://dev.to/percoguru/getting-started-with-apis-in-golang-feat-fiber-and-gorm-2n34)

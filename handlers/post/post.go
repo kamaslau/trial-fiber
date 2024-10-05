@@ -1,9 +1,10 @@
-package handlers
+package post
 
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
+	"github.com/kamaslau/trial-fiber/handlers"
 	"github.com/kamaslau/trial-fiber/models"
 )
 
@@ -15,7 +16,7 @@ func Find(c fiber.Ctx) error {
 	// Do
 	models.DBClient.Find(&data)
 	if len(data) == 0 {
-		return c.Status(404).JSON(ResNotFound)
+		return c.Status(404).JSON(handlers.ResNotFound)
 	}
 
 	response := fiber.Map{"data": data}
@@ -31,7 +32,7 @@ func FindOne(c fiber.Ctx) error {
 	conditions := map[string]interface{}{"ID": id}
 	models.DBClient.Where(conditions).First(&data)
 	if data.ID == 0 {
-		return c.Status(404).JSON(ResNotFound)
+		return c.Status(404).JSON(handlers.ResNotFound)
 	}
 
 	response := fiber.Map{"data": data}
@@ -74,7 +75,7 @@ func Update(c fiber.Ctx) error {
 	var data models.Post
 	models.DBClient.Where(conditions).First(&data)
 	if data.ID == 0 {
-		return c.Status(404).JSON(ResNotFound)
+		return c.Status(404).JSON(handlers.ResNotFound)
 	} else {
 		fmt.Printf("target: %#v\n", &data)
 	}
@@ -115,7 +116,7 @@ func Delete(c fiber.Ctx) error {
 	var data []models.Post
 	models.DBClient.Where(conditions).Find(&data) // No need to add 'deleted_at is null', GORM adds it by default with gorm.Model from type
 	if len(data) == 0 {
-		return c.Status(404).JSON(ResNotFound)
+		return c.Status(404).JSON(handlers.ResNotFound)
 	}
 
 	// Do
