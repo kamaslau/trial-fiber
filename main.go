@@ -9,9 +9,8 @@ import (
 	"github.com/gofiber/fiber/v3"
 	"github.com/joho/godotenv"
 
-	// Local packages
-	"github.com/kamaslau/trial-fiber/handlers"
 	"github.com/kamaslau/trial-fiber/models"
+	"github.com/kamaslau/trial-fiber/routes"
 )
 
 var port = "3000"
@@ -49,11 +48,10 @@ func main() {
 	})
 
 	// RESTful
-	app.Get("/post/:id", handlers.Post)
-	app.Get("/posts", handlers.Posts)
+	routes.InitPostRoutes(app)
 
 	// TODO GraphQL
-	app.Get("/graphql", handlers.Posts) // TODO Placeholder
+	app.Post("/graphql", routes.GraphQL)
 
 	startUp(app)
 }
