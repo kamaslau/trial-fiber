@@ -46,7 +46,7 @@ docker build . -t trial-fiber:latest
 
 docker stop trial-fiber && \
 docker rm trial-fiber && \
-docker run --name trial-fiber -p 3000:3000 -d --restart always trial-fiber:latest
+docker run --name trial-fiber -p 3000:3000 -d --restart always --net=host trial-fiber:latest
 ```
 
 ## References/Credits
