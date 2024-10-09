@@ -25,7 +25,7 @@ cp .env_template .env # specify database connection info
 go get
 
 # [Optional] Update dependencies
-go get ./...
+go get -u
 go mod tidy
 
 # Run
