@@ -1,25 +1,25 @@
 # trial-fiber
 
-[Fiber 开发框架](https://docs.gofiber.io/)的模板项目，可用于快速选型、微服务单元等。
+Template [Fiber framework](https://docs.gofiber.io/) project for fast prototyping, trial, or micro-service unit usage.
 
-需要确保系统中已安装 [Golang](https://go.dev/) 。
+Make sure that you have [Golang](https://go.dev/) installed already.
 
 ## [Optional] Setup Mirror for Mainland China
 
 You can skip this one if not approaching the internet from within mainland China.
 
 ```bash
-go env -w GOPROXY=https://goproxy.io,direct # 官方
-go env -w GOPROXY=https://goproxy.cn,direct # 七牛云
+go env -w GOPROXY=https://goproxy.io,direct # Official
+go env -w GOPROXY=https://goproxy.cn,direct # QiniuCloud/七牛云
 
-go env GOPROXY # 确认信息
+go env GOPROXY # Double check
 ```
 
 ## Usage
 
 ```bash
 # Create .env file
-cp .env_template .env # specify database connection info
+cp .env.sample .env # specify database connection info
 
 # Install dependencies
 go get
@@ -41,6 +41,7 @@ go build
 ```
 
 ## Deploy with docker
+
 ```bash
 docker build . -t trial-fiber:latest
 
