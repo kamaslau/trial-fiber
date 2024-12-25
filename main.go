@@ -6,11 +6,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gofiber/fiber/v3"
-	"github.com/joho/godotenv"
-
 	"github.com/kamaslau/trial-fiber/models"
 	"github.com/kamaslau/trial-fiber/routes"
+
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/static"
+	"github.com/joho/godotenv"
 )
 
 var port = "3000"
@@ -41,6 +42,8 @@ func main() {
 	models.ConnectDB()
 
 	app := fiber.New()
+
+	app.Use("/", static.New("./public"))
 
 	routes.InitRoutes(app)
 
