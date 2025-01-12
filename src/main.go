@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/kamaslau/trial-fiber/models"
-	"github.com/kamaslau/trial-fiber/routes"
+	"app/src/models"
+	"app/src/routes"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/static"

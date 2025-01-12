@@ -34,7 +34,7 @@ go install github.com/air-verse/air@latest # This line only needs to be run once
 air
 
 ## Without live-reloading
-go run .
+go run src/main.go
 
 # Compile
 go build

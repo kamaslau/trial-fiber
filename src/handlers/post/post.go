@@ -2,10 +2,12 @@ package post
 
 import (
 	"fmt"
+
+	"app/src/handlers"
+	"app/src/models"
+
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
-	"github.com/kamaslau/trial-fiber/handlers"
-	"github.com/kamaslau/trial-fiber/models"
 )
 
 func Find(c fiber.Ctx) error {

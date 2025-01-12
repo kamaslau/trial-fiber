@@ -1,8 +1,9 @@
 package post
 
 import (
+	"app/src/handlers/post"
+
 	"github.com/gofiber/fiber/v3"
-	"github.com/kamaslau/trial-fiber/handlers/post"
 )
 
 func InitRoutes(router fiber.Router) {
