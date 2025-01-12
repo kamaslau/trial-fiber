@@ -28,10 +28,10 @@ go env GOPROXY # Double check
 cp .env.sample .env # specify database connection info
 
 # Install dependencies
-go get
+go get ./src
 
 # [Optional] Update dependencies
-go get -u
+go get -u ./src
 go mod tidy
 
 # Run
