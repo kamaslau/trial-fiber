@@ -1,10 +1,13 @@
 # trial-fiber
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+![Repository size](https://img.shields.io/github/repo-size/kamaslau/trial-fiber?color=56BEB8)
+
 Template [Fiber framework](https://docs.gofiber.io/) project for fast prototyping, trial, or micro-service unit usage.
 
 Make sure that you have [Golang](https://go.dev/) installed already.
 
-## [Optional] Setup Mirror for Mainland China
+## [🇨🇳 Optional] Setup Mirror for Mainland China
 
 You can skip this one if not approaching the internet from within mainland China.
 
