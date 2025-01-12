@@ -1,7 +1,7 @@
 .git
 .github
 .dockerignore
-.env_template
+.env.sample
 Dockerfile
 README.md
 .air.toml
