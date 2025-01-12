@@ -35,15 +35,28 @@ go get -u ./src
 go mod tidy
 
 # Run
-## With live-reloading (air)
-go install github.com/air-verse/air@latest # This line only needs to be run once
+## With live-reloading (via air-verse/air)
+### Install and config air
+go install github.com/air-verse/air@latest
+air init
+### Change the .air.toml file generated
+#### macOS/Linux
+[build]
+bin = "./tmp/main"
+cmd = "go build -o ./tmp/main ./src"
+#### Windows
+[build]
+bin = "tmp\\main.exe"
+cmd = "go build -o ./tmp/main.exe ./src"
+### Use
 air
 
 ## Without live-reloading
 go run src/main.go
 
 # Compile
-go build
+## Remember to put a .env file in to the same directory with the executable file compiled
+go build -o ./dist/main ./src
 ```
 
 ## Deploy with docker

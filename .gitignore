@@ -26,3 +26,7 @@ tmp
 
 # IDEs
 .idea
+
+# Compile outputs
+dist/*
+!dist/.gitKeep
