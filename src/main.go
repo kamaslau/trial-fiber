@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"app/src/drivers"
 	"app/src/models"
 	"app/src/routes"
 
@@ -24,21 +25,21 @@ func loadEnv() {
 }
 
 func startUp(app *fiber.App) {
-	fmt.Printf("env.PORT: %s", os.Getenv("PORT"))
-
 	if strings.Count(os.Getenv("PORT"), "") > 0 {
+		log.Printf("env.PORT: %s", os.Getenv("PORT"))
 		port = os.Getenv("PORT")
 	}
 
 	err := app.Listen(fmt.Sprintf(":%s", port))
 	if err != nil {
-		fmt.Println("Error trying to launching fiber: ", err)
+		log.Fatal("Error trying to launching fiber: ", err)
 	}
 }
 
 func main() {
 	loadEnv() // Load env variable(s)
 
+	drivers.ConnectCache()
 	models.ConnectDB()
 
 	app := fiber.New()

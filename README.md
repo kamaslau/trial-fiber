@@ -7,6 +7,9 @@ Template [Fiber framework](https://docs.gofiber.io/) project for fast prototypin
 
 Make sure that you have [Golang](https://go.dev/) installed already.
 
+- [GORM](https://gorm.io/) as ORM
+- [Redis](https://github.com/redis/go-redis) as Cache
+
 ## [🇨🇳 Optional] Setup Mirror for Mainland China
 
 You can skip this one if not approaching the internet from within mainland China.
