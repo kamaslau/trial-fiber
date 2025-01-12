@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"app/src/drivers"
-	"app/src/models"
 	"app/src/routes"
 
 	"github.com/gofiber/fiber/v3"
@@ -40,7 +39,7 @@ func main() {
 	loadEnv() // Load env variable(s)
 
 	drivers.ConnectCache()
-	models.ConnectDB()
+	drivers.ConnectDB()
 
 	app := fiber.New()
 

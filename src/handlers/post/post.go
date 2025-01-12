@@ -3,6 +3,7 @@ package post
 import (
 	"fmt"
 
+	"app/src/drivers"
 	"app/src/handlers"
 	"app/src/models"
 
@@ -16,7 +17,7 @@ func Find(c fiber.Ctx) error {
 	var data []models.Post
 
 	// Do
-	models.DBClient.Find(&data)
+	drivers.DBClient.Find(&data)
 	if len(data) == 0 {
 		return c.Status(404).JSON(handlers.ResNotFound)
 	}
@@ -32,7 +33,7 @@ func FindOne(c fiber.Ctx) error {
 
 	var data models.Post
 	conditions := map[string]interface{}{"ID": id}
-	models.DBClient.Where(conditions).First(&data)
+	drivers.DBClient.Where(conditions).First(&data)
 	if data.ID == 0 {
 		return c.Status(404).JSON(handlers.ResNotFound)
 	}
@@ -57,7 +58,7 @@ func Create(c fiber.Ctx) error {
 	payload.UUID = uuid.NewString()
 
 	// Do
-	result := models.DBClient.Create(&payload)
+	result := drivers.DBClient.Create(&payload)
 	if result.RowsAffected == 1 {
 		response := fiber.Map{"succeed": "yes", "id": payload.ID}
 		return c.JSON(response)
@@ -75,7 +76,7 @@ func Update(c fiber.Ctx) error {
 
 	// Lookup Target
 	var data models.Post
-	models.DBClient.Where(conditions).First(&data)
+	drivers.DBClient.Where(conditions).First(&data)
 	if data.ID == 0 {
 		return c.Status(404).JSON(handlers.ResNotFound)
 	} else {
@@ -99,7 +100,7 @@ func Update(c fiber.Ctx) error {
 	data.Excerpt = payload.Excerpt
 
 	// Do
-	result := models.DBClient.Save(&data)
+	result := drivers.DBClient.Save(&data)
 	if result.RowsAffected != 1 {
 		fmt.Println(result.Error)
 		return c.Status(500).JSON(fiber.Map{"succeed": "no", "message": "Failed to update"})
@@ -116,13 +117,13 @@ func Delete(c fiber.Ctx) error {
 
 	// Lookup Target(s)
 	var data []models.Post
-	models.DBClient.Where(conditions).Find(&data) // No need to add 'deleted_at is null', GORM adds it by default with gorm.Model from type
+	drivers.DBClient.Where(conditions).Find(&data) // No need to add 'deleted_at is null', GORM adds it by default with gorm.Model from type
 	if len(data) == 0 {
 		return c.Status(404).JSON(handlers.ResNotFound)
 	}
 
 	// Do
-	result := models.DBClient.Where(conditions).Delete(&models.Post{})
+	result := drivers.DBClient.Where(conditions).Delete(&models.Post{})
 	if result.RowsAffected != 1 {
 		fmt.Println(result.Error)
 		return c.Status(500).JSON(fiber.Map{"succeed": "no", "message": "Failed to delete"})

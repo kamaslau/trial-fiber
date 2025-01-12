@@ -1,9 +1,11 @@
-package models
+package drivers
 
 import (
 	"log"
 	"os"
 	"strconv"
+
+	"app/src/models"
 
 	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
@@ -27,7 +29,7 @@ func ConnectDB() {
 	}
 
 	//https://gorm.io/docs/migration.html#Auto-Migration
-	err = DBClient.AutoMigrate(&Post{})
+	err = DBClient.AutoMigrate(&models.Post{})
 	if err != nil {
 		panic("failed to migrate database: " + err.Error())
 	} else {
@@ -37,7 +39,7 @@ func ConnectDB() {
 
 // logOnConnected 写日志：数据库连接成功
 func logOnConnected() {
-	var payload = Post{
+	var payload = models.Post{
 		UUID:    uuid.NewString(),
 		Name:    "DB connected",
 		Content: "This is an auto generated message on database connection succeed.",
