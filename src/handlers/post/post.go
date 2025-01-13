@@ -16,20 +16,34 @@ func Find(c fiber.Ctx) error {
 	log.Println("Find: ")
 
 	// TODO Extract inputs from JSON body
+	type Pager struct {
+		limit  int
+		offset int
+	}
+	type Sorter map[string]interface{}
+	type Filter map[string]interface{}
+	type FindInput struct {
+		Pager
+		Sorter
+		Filter
+	}
+	var payload FindInput
+	c.Bind().Body(&payload)
+
 	var count int64
 	var data []models.Post
 	var pager = map[string]int{"limit": 10, "offset": 0}
-	var sorter = "id desc"
-	var filter map[string]interface{} = nil // Empty filter
+	var sorter Sorter = nil
+	var filter Filter = nil // Empty filter
 
 	// Do
 	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
 	drivers.DBClient.Where(filter).Order(sorter).Limit(pager["limit"]).Offset(pager["offset"]).Find(&data)
 
 	response := fiber.Map{
-		"count": count,
-		"data": data,
-		"pager": pager,
+		"count":  count,
+		"data":   data,
+		"pager":  pager,
 		"sorter": sorter,
 		"filter": filter,
 	}
@@ -39,7 +53,7 @@ func Find(c fiber.Ctx) error {
 
 func FindOne(c fiber.Ctx) error {
 	var id = c.Params("id")
-	fmt.Printf("FindOne: id=%s\n", id)
+	log.Printf("FindOne: id=%s\n", id)
 
 	var data models.Post
 	conditions := map[string]interface{}{"ID": id}
@@ -54,7 +68,7 @@ func FindOne(c fiber.Ctx) error {
 }
 
 func Create(c fiber.Ctx) error {
-	fmt.Println("Create: ")
+	log.Println("Create: ")
 
 	// Parse payload
 	var payload models.Post
@@ -80,7 +94,7 @@ func Create(c fiber.Ctx) error {
 
 func Update(c fiber.Ctx) error {
 	var id = c.Params("id")
-	fmt.Printf("Update: id=%s\n", id)
+	log.Printf("Update: id=%s\n", id)
 
 	conditions := map[string]interface{}{"ID": id}
 
@@ -121,7 +135,7 @@ func Update(c fiber.Ctx) error {
 
 func Delete(c fiber.Ctx) error {
 	var id = c.Params("id")
-	fmt.Printf("Delete: id=%s\n", id)
+	log.Printf("Delete: id=%s\n", id)
 
 	conditions := map[string]interface{}{"ID": id}
 
