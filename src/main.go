@@ -25,7 +25,7 @@ func loadEnv() {
 
 func startUp(app *fiber.App) {
 	if strings.Count(os.Getenv("PORT"), "") > 0 {
-		log.Printf("env.PORT: %s", os.Getenv("PORT"))
+		log.Printf("👂 env.PORT: \033[33m%s\033[0m", os.Getenv("PORT"))
 		port = os.Getenv("PORT")
 	}
 
@@ -38,14 +38,15 @@ func startUp(app *fiber.App) {
 func main() {
 	loadEnv() // Load env variable(s)
 
+	// Init Components first, fail fast so we can debug faster
 	drivers.ConnectCache()
 	drivers.ConnectDB()
 
 	app := fiber.New()
 
-	app.Use("/", static.New("./public"))
-
+	// Routes
 	routes.InitRoutes(app)
+	app.Use("/", static.New("./public"))
 
 	startUp(app)
 }

@@ -20,6 +20,6 @@ func ConnectCache() {
 		panic(err)
 	} else {
 		CacheClient = redis.NewClient(opts)
-		log.Print("Cache connected")
+		log.Print("👍 Cache connected")
 	}
 }

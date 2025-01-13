@@ -25,7 +25,7 @@ func ConnectDB() {
 		panic("failed to connect database: " + err.Error())
 	} else {
 		DBClient = db
-		log.Print("DB connected")
+		log.Print("👍 Database connected")
 	}
 
 	//https://gorm.io/docs/migration.html#Auto-Migration
