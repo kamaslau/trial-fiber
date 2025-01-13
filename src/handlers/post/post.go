@@ -2,6 +2,7 @@ package post
 
 import (
 	"fmt"
+	"log"
 
 	"app/src/drivers"
 	"app/src/handlers"
@@ -12,17 +13,26 @@ import (
 )
 
 func Find(c fiber.Ctx) error {
-	fmt.Println("Find: ")
+	log.Println("Find: ")
 
+	// TODO Extract inputs from JSON body
+	var count int64
 	var data []models.Post
+	var pager = map[string]int{"limit": 10, "offset": 0}
+	var sorter = "id desc"
+	var filter map[string]interface{} = nil // Empty filter
 
 	// Do
-	drivers.DBClient.Find(&data)
-	if len(data) == 0 {
-		return c.Status(404).JSON(handlers.ResNotFound)
-	}
+	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
+	drivers.DBClient.Where(filter).Order(sorter).Limit(pager["limit"]).Offset(pager["offset"]).Find(&data)
 
-	response := fiber.Map{"data": data}
+	response := fiber.Map{
+		"count": count,
+		"data": data,
+		"pager": pager,
+		"sorter": sorter,
+		"filter": filter,
+	}
 
 	return c.JSON(response)
 }
