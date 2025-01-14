@@ -12,33 +12,32 @@ import (
 	"github.com/google/uuid"
 )
 
+// Pager Paging segments
+type Pager struct {
+	limit  int `query:"limit"`
+	offset int `query:"offset"`
+}
+
 func Find(c fiber.Ctx) error {
 	log.Println("Find: ")
 
-	// TODO Extract inputs from JSON body
-	type Pager struct {
-		limit  int
-		offset int
+	var pager = new(Pager)
+	if err := c.Bind().Query(pager); err != nil {
+		log.Println(err)
+		return c.Status(400).JSON(fiber.Map{"succeed": "no", "message": "input error"})
+	}	else {
+		// log.Printf("pager: %#v\n", pager)
 	}
-	type Sorter map[string]interface{}
-	type Filter map[string]interface{}
-	type FindInput struct {
-		Pager
-		Sorter
-		Filter
-	}
-	var payload FindInput
-	c.Bind().Body(&payload)
+
+	var sorter = map[string]interface{}{"id":"desc"}
+	var filter = map[string]interface{}{}
 
 	var count int64
 	var data []models.Post
-	var pager = map[string]int{"limit": 10, "offset": 0}
-	var sorter Sorter = nil
-	var filter Filter = nil // Empty filter
 
 	// Do
 	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
-	drivers.DBClient.Where(filter).Order(sorter).Limit(pager["limit"]).Offset(pager["offset"]).Find(&data)
+	drivers.DBClient.Where(filter).Order(sorter).Limit(pager.limit).Offset(pager.offset).Find(&data)
 
 	response := fiber.Map{
 		"count":  count,
@@ -72,12 +71,11 @@ func Create(c fiber.Ctx) error {
 
 	// Parse payload
 	var payload models.Post
-	err := c.Bind().Body(&payload)
-	if err != nil {
-		fmt.Println(err)
+	if err := c.Bind().Body(&payload);err != nil {
+		log.Println(err)
 		return c.Status(400).JSON(fiber.Map{"succeed": "no", "message": "input error"})
 	} else {
-		fmt.Printf("payload: %#v\n", &payload)
+		log.Printf("payload: %#v\n", &payload)
 	}
 	payload.UUID = uuid.NewString()
 
