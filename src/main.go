@@ -38,9 +38,10 @@ func startUp(app *fiber.App) {
 func main() {
 	loadEnv() // Load env variable(s)
 
-	// Init Components first, fail fast so we can debug faster
-	drivers.ConnectCache()
-	drivers.ConnectDB()
+	// Initiate Components first, fail fast so we can debug faster
+	drivers.ConnectDB() // Exit on failure
+	drivers.ConnectCache() // Warning on failure
+	drivers.ConnectMQ() // Warning on failure
 
 	app := fiber.New()
 
