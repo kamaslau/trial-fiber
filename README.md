@@ -7,8 +7,9 @@ Template [Fiber framework](https://docs.gofiber.io/) project for fast prototypin
 
 Make sure that you have [Golang](https://go.dev/) installed already.
 
-- [GORM](https://gorm.io/) as ORM
-- [Redis](https://github.com/redis/go-redis) as Cache
+- [GORM](https://gorm.io/docs/) as ORM
+- [Redis](https://redis.io/docs/latest/) as Cache
+- [NATS](https://docs.nats.io/) as Message Queue
 
 ## [🇨🇳 Optional] Setup Mirror for Mainland China
 
