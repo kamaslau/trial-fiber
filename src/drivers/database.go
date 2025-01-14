@@ -27,7 +27,7 @@ func ConnectDB() {
 		log.Print("👍 Database connected")
 	}
 
-	//https://gorm.io/docs/migration.html#Auto-Migration
+	// https://gorm.io/docs/migration.html#Auto-Migration
 	if err := DBClient.AutoMigrate(&models.Post{}); err != nil {
 		panic("failed to migrate database: " + err.Error())
 	} else {

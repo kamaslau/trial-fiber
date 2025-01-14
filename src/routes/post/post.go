@@ -10,8 +10,17 @@ func InitRoutes(router fiber.Router) {
 	route := router.Group("/post")
 
 	route.Get("/", post.Find)
+	// curl "http://localhost:3000/post?limit=5&offset=1"
+
 	route.Get("/:id", post.FindOne)
+	// curl "http://localhost:3000/post/1"
+
 	route.Post("/", post.Create)
+	// curl -X POST -H "Content-Type: application/json" --data "{\"name\":\"Test Post Request Method Route\",\"content\":\"This is a placeholder.\"}" http://localhost:3000/post
+
 	route.Put("/:id", post.Update)
+	// curl -X PUT -H "Content-Type: application/json" --data "{\"name\":\"Test Put Request Method Route\",\"content\":\"This is a placeholder.\"}" http://localhost:3000/post/1
+
 	route.Delete("/:id", post.Delete)
+	// curl -X DELETE http://localhost:3000/post/1
 }

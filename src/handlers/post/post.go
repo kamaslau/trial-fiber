@@ -1,7 +1,6 @@
 package post
 
 import (
-	"fmt"
 	"log"
 
 	"app/src/drivers"
@@ -85,7 +84,7 @@ func Create(c fiber.Ctx) error {
 		response := fiber.Map{"succeed": "yes", "id": payload.ID}
 		return c.JSON(response)
 	} else {
-		fmt.Println(result.Error)
+		log.Println(result.Error)
 		return c.Status(500).JSON(fiber.Map{"succeed": "no", "message": result.Error})
 	}
 }
@@ -102,17 +101,17 @@ func Update(c fiber.Ctx) error {
 	if data.ID == 0 {
 		return c.Status(404).JSON(handlers.ResNotFound)
 	} else {
-		fmt.Printf("target: %#v\n", &data)
+		log.Printf("target: %#v\n", &data)
 	}
 
 	// Parse payload
 	var payload models.Post
 	err := c.Bind().Body(&payload)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return c.Status(400).JSON(fiber.Map{"succeed": "no", "message": "input error"})
 	} else {
-		fmt.Printf("payload: %#v\n", &payload)
+		log.Printf("payload: %#v\n", &payload)
 	}
 
 	// Merge payload to current data
@@ -124,7 +123,7 @@ func Update(c fiber.Ctx) error {
 	// Do
 	result := drivers.DBClient.Save(&data)
 	if result.RowsAffected != 1 {
-		fmt.Println(result.Error)
+		log.Println(result.Error)
 		return c.Status(500).JSON(fiber.Map{"succeed": "no", "message": "Failed to update"})
 	}
 
@@ -147,7 +146,7 @@ func Delete(c fiber.Ctx) error {
 	// Do
 	result := drivers.DBClient.Where(conditions).Delete(&models.Post{})
 	if result.RowsAffected != 1 {
-		fmt.Println(result.Error)
+		log.Println(result.Error)
 		return c.Status(500).JSON(fiber.Map{"succeed": "no", "message": "Failed to delete"})
 	}
 
