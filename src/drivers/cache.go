@@ -15,9 +15,8 @@ func ConnectCache() {
 	REDIS_URL := os.Getenv("REDIS_URL")
 	// log.Print("REDIS_URL: ", REDIS_URL)
 
-	opts, err := redis.ParseURL(REDIS_URL)
-	if err != nil {
-		panic(err)
+	if opts, err := redis.ParseURL(REDIS_URL); err != nil {
+		log.Print("⛔ Cache ", err)
 	} else {
 		CacheClient = redis.NewClient(opts)
 		log.Print("👍 Cache connected")

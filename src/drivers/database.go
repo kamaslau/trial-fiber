@@ -20,8 +20,7 @@ func ConnectDB() {
 	DB_DSN := os.Getenv("DB_DSN")
 	// log.Print("DB_DSN: ", DB_DSN)
 
-	db, err := gorm.Open(mysql.Open(DB_DSN), &gorm.Config{})
-	if err != nil {
+	if db, err := gorm.Open(mysql.Open(DB_DSN), &gorm.Config{}); err != nil {
 		panic("failed to connect database: " + err.Error())
 	} else {
 		DBClient = db
@@ -29,8 +28,7 @@ func ConnectDB() {
 	}
 
 	//https://gorm.io/docs/migration.html#Auto-Migration
-	err = DBClient.AutoMigrate(&models.Post{})
-	if err != nil {
+	if err := DBClient.AutoMigrate(&models.Post{}); err != nil {
 		panic("failed to migrate database: " + err.Error())
 	} else {
 		logOnConnected()
