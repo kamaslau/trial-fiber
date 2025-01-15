@@ -13,8 +13,8 @@ import (
 
 // Pager Paging segments
 type Pager struct {
-	limit  int `query:"limit"`
-	offset int `query:"offset"`
+	Limit  int `query:"limit"`
+	Offset int `query:"offset"`
 }
 
 func Count (c fiber.Ctx) error {
@@ -45,7 +45,9 @@ func Find(c fiber.Ctx) error {
 
 	// Do
 	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
-	drivers.DBClient.Where(filter).Order(sorter).Limit(pager.limit).Offset(pager.offset).Find(&data)
+	if count >0 {
+		drivers.DBClient.Where(filter).Order(sorter).Limit(pager.Limit).Offset(pager.Offset).Find(&data)
+	}
 
 	// Output
 	response := fiber.Map{
