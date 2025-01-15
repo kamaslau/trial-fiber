@@ -17,6 +17,38 @@ type Pager struct {
 	Offset int `query:"offset"`
 }
 
+// Sorter Sorter segments
+type Sorter struct {
+	ID        string `query:"id"`
+	CreatedAt string `query:"created_at"`
+	UpdatedAt string `query:"updated_at"`
+	DeletedAt string `query:"deleted_at"`
+	Name 		string `query:"name"`
+}
+
+func ComposeSorter(c fiber.Ctx, sorter *Sorter, via string) {
+	var defaultSorter = Sorter{ID: "desc"}
+	var err error
+
+	switch via {
+	case "query":
+		err = c.Bind().Query(sorter)
+	case "json":
+		err = c.Bind().JSON(sorter)
+	case "form":
+		err = c.Bind().Form(sorter)
+	default:
+		panic("Unsupported via")
+	}
+
+	if err != nil {
+		log.Println(err)
+		sorter = &defaultSorter
+	} else {
+		log.Printf("sorter: %#v\n", sorter)
+	}
+}
+
 func Count(c fiber.Ctx) error {
 	log.Println("Count: ")
 
@@ -37,7 +69,11 @@ func Find(c fiber.Ctx) error {
 		log.Printf("pager: %#v\n", pager)
 	}
 
-	var sorter = map[string]string{"id": "desc"}
+	// var _sorter = new(Sorter)
+	// ComposeSorter(c, _sorter, "query")
+	var sorter = c.Query("sorter","id desc")
+	log.Printf("sorter: %#v\n", sorter)
+
 	var filter = map[string]any{}
 
 	var count int64
