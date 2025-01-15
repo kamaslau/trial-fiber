@@ -37,8 +37,8 @@ func Find(c fiber.Ctx) error {
 		log.Printf("pager: %#v\n", pager)
 	}
 
-	var sorter = map[string]interface{}{"id": "desc"}
-	var filter = map[string]interface{}{}
+	var sorter = map[string]string{"id": "desc"}
+	var filter = map[string]any{}
 
 	var count int64
 	var data []models.Post
@@ -47,6 +47,7 @@ func Find(c fiber.Ctx) error {
 	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
 	drivers.DBClient.Where(filter).Order(sorter).Limit(pager.limit).Offset(pager.offset).Find(&data)
 
+	// Output
 	response := fiber.Map{
 		"count":  count,
 		"data":   data,
@@ -54,7 +55,6 @@ func Find(c fiber.Ctx) error {
 		"sorter": sorter,
 		"filter": filter,
 	}
-
 	return c.JSON(response)
 }
 
@@ -63,15 +63,19 @@ func FindOne(c fiber.Ctx) error {
 	log.Printf("FindOne: id=%s\n", id)
 
 	var data models.Post
+
 	conditions := map[string]interface{}{"ID": id}
+
+	// Do
 	drivers.DBClient.Where(conditions).First(&data)
+
+	// Output
 	if data.ID == 0 {
 		return c.Status(404).JSON(handlers.GetHTTPStatus(404))
+	} else {
+		response := fiber.Map{"data": data}
+		return c.JSON(response)
 	}
-
-	response := fiber.Map{"data": data}
-
-	return c.JSON(response)
 }
 
 func Create(c fiber.Ctx) error {
@@ -81,7 +85,7 @@ func Create(c fiber.Ctx) error {
 	var payload models.Post
 	if err := c.Bind().Body(&payload); err != nil {
 		log.Println(err)
-		return c.Status(400).JSON(fiber.Map{"succeed": "no", "message": "input error"})
+		return c.Status(400).JSON(handlers.GetHTTPStatus(400))
 	} else {
 		log.Printf("payload: %#v\n", &payload)
 	}
@@ -89,12 +93,14 @@ func Create(c fiber.Ctx) error {
 
 	// Do
 	result := drivers.DBClient.Create(&payload)
+
+	// Output
 	if result.RowsAffected == 1 {
 		response := fiber.Map{"succeed": "yes", "id": payload.ID}
 		return c.JSON(response)
 	} else {
 		log.Println(result.Error)
-		return c.Status(500).JSON(fiber.Map{"succeed": "no", "message": result.Error})
+		return c.Status(500).JSON(handlers.GetHTTPStatus(500))
 	}
 }
 
@@ -118,7 +124,7 @@ func Update(c fiber.Ctx) error {
 	err := c.Bind().Body(&payload)
 	if err != nil {
 		log.Println(err)
-		return c.Status(400).JSON(fiber.Map{"succeed": "no", "message": "input error"})
+		return c.Status(400).JSON(handlers.GetHTTPStatus(400))
 	} else {
 		log.Printf("payload: %#v\n", &payload)
 	}
@@ -133,7 +139,7 @@ func Update(c fiber.Ctx) error {
 	result := drivers.DBClient.Save(&data)
 	if result.RowsAffected != 1 {
 		log.Println(result.Error)
-		return c.Status(500).JSON(fiber.Map{"succeed": "no", "message": "Failed to update"})
+		return c.Status(500).JSON(handlers.GetHTTPStatus(500))
 	}
 
 	return c.JSON(fiber.Map{"succeed": "yes"})
@@ -156,7 +162,7 @@ func Delete(c fiber.Ctx) error {
 	result := drivers.DBClient.Where(conditions).Delete(&models.Post{})
 	if result.RowsAffected != 1 {
 		log.Println(result.Error)
-		return c.Status(500).JSON(fiber.Map{"succeed": "no", "message": "Failed to delete"})
+		return c.Status(500).JSON(handlers.GetHTTPStatus(500))
 	}
 
 	return c.JSON(fiber.Map{"succeed": "yes"})
