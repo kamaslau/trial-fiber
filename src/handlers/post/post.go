@@ -23,12 +23,12 @@ func Find(c fiber.Ctx) error {
 	var pager = new(Pager)
 	if err := c.Bind().Query(pager); err != nil {
 		log.Println(err)
-		return c.Status(400).JSON(fiber.Map{"succeed": "no", "message": "input error"})
-	}	else {
-		// log.Printf("pager: %#v\n", pager)
+		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
+	} else {
+		log.Printf("pager: %#v\n", pager)
 	}
 
-	var sorter = map[string]interface{}{"id":"desc"}
+	var sorter = map[string]interface{}{"id": "desc"}
 	var filter = map[string]interface{}{}
 
 	var count int64
@@ -57,7 +57,7 @@ func FindOne(c fiber.Ctx) error {
 	conditions := map[string]interface{}{"ID": id}
 	drivers.DBClient.Where(conditions).First(&data)
 	if data.ID == 0 {
-		return c.Status(404).JSON(handlers.ResNotFound)
+		return c.Status(404).JSON(handlers.GetHTTPStatus(404))
 	}
 
 	response := fiber.Map{"data": data}
@@ -70,7 +70,7 @@ func Create(c fiber.Ctx) error {
 
 	// Parse payload
 	var payload models.Post
-	if err := c.Bind().Body(&payload);err != nil {
+	if err := c.Bind().Body(&payload); err != nil {
 		log.Println(err)
 		return c.Status(400).JSON(fiber.Map{"succeed": "no", "message": "input error"})
 	} else {
@@ -99,7 +99,7 @@ func Update(c fiber.Ctx) error {
 	var data models.Post
 	drivers.DBClient.Where(conditions).First(&data)
 	if data.ID == 0 {
-		return c.Status(404).JSON(handlers.ResNotFound)
+		return c.Status(404).JSON(handlers.GetHTTPStatus(404))
 	} else {
 		log.Printf("target: %#v\n", &data)
 	}
@@ -140,7 +140,7 @@ func Delete(c fiber.Ctx) error {
 	var data []models.Post
 	drivers.DBClient.Where(conditions).Find(&data) // No need to add 'deleted_at is null', GORM adds it by default with gorm.Model from type
 	if len(data) == 0 {
-		return c.Status(404).JSON(handlers.ResNotFound)
+		return c.Status(404).JSON(handlers.GetHTTPStatus(404))
 	}
 
 	// Do
