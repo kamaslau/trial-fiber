@@ -14,7 +14,7 @@ var HTTPStatus = map[uint16]string{
 	500: "Internal Server Error",
 }
 
-func GetHTTPStatus(code uint16) map[string]interface{} {
+func GetHTTPStatus(code uint16) map[string]any {
 	return fiber.Map{
 		"status":  code,
 		"message": HTTPStatus[code],

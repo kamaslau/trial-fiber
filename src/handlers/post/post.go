@@ -64,7 +64,7 @@ func FindOne(c fiber.Ctx) error {
 
 	var data models.Post
 
-	conditions := map[string]interface{}{"ID": id}
+	conditions := map[string]any{"ID": id}
 
 	// Do
 	drivers.DBClient.Where(conditions).First(&data)
@@ -108,7 +108,7 @@ func Update(c fiber.Ctx) error {
 	var id = c.Params("id")
 	log.Printf("Update: id=%s\n", id)
 
-	conditions := map[string]interface{}{"ID": id}
+	conditions := map[string]any{"ID": id}
 
 	// Lookup Target
 	var data models.Post
@@ -149,7 +149,7 @@ func Delete(c fiber.Ctx) error {
 	var id = c.Params("id")
 	log.Printf("Delete: id=%s\n", id)
 
-	conditions := map[string]interface{}{"ID": id}
+	conditions := map[string]any{"ID": id}
 
 	// Lookup Target(s)
 	var data []models.Post
