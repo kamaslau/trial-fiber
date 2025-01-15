@@ -11,44 +11,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// Pager Paging segments
-type Pager struct {
-	Limit  int `query:"limit"`
-	Offset int `query:"offset"`
-}
-
-// Sorter Sorter segments
-type Sorter struct {
-	ID        string `query:"id"`
-	CreatedAt string `query:"created_at"`
-	UpdatedAt string `query:"updated_at"`
-	DeletedAt string `query:"deleted_at"`
-	Name 		string `query:"name"`
-}
-
-func ComposeSorter(c fiber.Ctx, sorter *Sorter, via string) {
-	var defaultSorter = Sorter{ID: "desc"}
-	var err error
-
-	switch via {
-	case "query":
-		err = c.Bind().Query(sorter)
-	case "json":
-		err = c.Bind().JSON(sorter)
-	case "form":
-		err = c.Bind().Form(sorter)
-	default:
-		panic("Unsupported via")
-	}
-
-	if err != nil {
-		log.Println(err)
-		sorter = &defaultSorter
-	} else {
-		log.Printf("sorter: %#v\n", sorter)
-	}
-}
-
 func Count(c fiber.Ctx) error {
 	log.Println("Count: ")
 
@@ -61,27 +23,32 @@ func Count(c fiber.Ctx) error {
 func Find(c fiber.Ctx) error {
 	log.Println("Find: ")
 
-	var pager = new(Pager)
+	var pager = new(handlers.Pager)
 	if err := c.Bind().Query(pager); err != nil {
 		log.Println(err)
 		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
 	} else {
-		log.Printf("pager: %#v\n", pager)
+		// log.Printf("pager: %#v\n", pager)
 	}
 
-	// var _sorter = new(Sorter)
-	// ComposeSorter(c, _sorter, "query")
-	var sorter = c.Query("sorter","id desc")
-	log.Printf("sorter: %#v\n", sorter)
+	var sorter = c.Query("sorter", "id desc")
+	// log.Printf("sorter: %#v\n", sorter)
 
 	var filter = map[string]any{}
+	if err := handlers.ComposeFilter(c, &filter); err != nil {
+		log.Println(err)
+		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
+	} else {
+		// log.Printf("filter: %#v\n", filter)
+	}
 
+	// Do Count
 	var count int64
-	var data []models.Post
-
-	// Do
 	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
-	if count > 0 {
+
+	// Do Find
+	var data []models.Post
+	if count > 0 && count > int64(pager.Offset) {
 		drivers.DBClient.Where(filter).Order(sorter).Limit(pager.Limit).Offset(pager.Offset).Find(&data)
 	}
 

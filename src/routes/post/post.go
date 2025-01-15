@@ -13,7 +13,7 @@ func InitRoutes(router fiber.Router) {
 	// curl "http://localhost:3000/post/count"
 
 	route.Get("/", post.Find)
-	// curl "http://localhost:3000/post?limit=5&offset=0&sorter=name+desc"
+	// curl "http://localhost:3000/post?limit=5&offset=0&sorter=name+desc&filter=name:tft_dasd,excerpt:nn"
 
 	route.Get("/:id", post.FindOne)
 	// curl "http://localhost:3000/post/1"
