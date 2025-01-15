@@ -17,6 +17,15 @@ type Pager struct {
 	offset int `query:"offset"`
 }
 
+func Count (c fiber.Ctx) error {
+	log.Println("Count: ")
+
+	var count int64
+	drivers.DBClient.Model(&models.Post{}).Count(&count)
+
+	return c.JSON(fiber.Map{"count": count})
+}
+
 func Find(c fiber.Ctx) error {
 	log.Println("Find: ")
 

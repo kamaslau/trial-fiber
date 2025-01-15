@@ -9,6 +9,9 @@ import (
 func InitRoutes(router fiber.Router) {
 	route := router.Group("/post")
 
+	route.Get("/count", post.Count)
+	// curl "http://localhost:3000/post/count"
+
 	route.Get("/", post.Find)
 	// curl "http://localhost:3000/post?limit=5&offset=1"
 
