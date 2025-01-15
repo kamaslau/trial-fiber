@@ -21,9 +21,9 @@ func InitRoutes(router fiber.Router) {
 	route.Post("/", post.Create)
 	// curl -X POST -H "Content-Type: application/json" --data "{\"name\":\"Test Post Request Method Route\",\"content\":\"This is a placeholder.\"}" http://localhost:3000/post
 
-	route.Put("/:id", post.Update)
+	route.Put("/:id", post.UpdateOne)
 	// curl -X PUT -H "Content-Type: application/json" --data "{\"name\":\"Test Put Request Method Route\",\"content\":\"This is a placeholder.\"}" http://localhost:3000/post/1
 
-	route.Delete("/:id", post.Delete)
+	route.Delete("/:id", post.DeleteOne)
 	// curl -X DELETE http://localhost:3000/post/1
 }

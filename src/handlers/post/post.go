@@ -17,7 +17,7 @@ type Pager struct {
 	Offset int `query:"offset"`
 }
 
-func Count (c fiber.Ctx) error {
+func Count(c fiber.Ctx) error {
 	log.Println("Count: ")
 
 	var count int64
@@ -45,7 +45,7 @@ func Find(c fiber.Ctx) error {
 
 	// Do
 	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
-	if count >0 {
+	if count > 0 {
 		drivers.DBClient.Where(filter).Order(sorter).Limit(pager.Limit).Offset(pager.Offset).Find(&data)
 	}
 
@@ -106,7 +106,7 @@ func Create(c fiber.Ctx) error {
 	}
 }
 
-func Update(c fiber.Ctx) error {
+func UpdateOne(c fiber.Ctx) error {
 	var id = c.Params("id")
 	log.Printf("Update: id=%s\n", id)
 
@@ -139,6 +139,7 @@ func Update(c fiber.Ctx) error {
 
 	// Do
 	result := drivers.DBClient.Save(&data)
+	log.Printf("result: %#v\n", &result)
 	if result.RowsAffected != 1 {
 		log.Println(result.Error)
 		return c.Status(500).JSON(handlers.GetHTTPStatus(500))
@@ -147,7 +148,7 @@ func Update(c fiber.Ctx) error {
 	return c.JSON(fiber.Map{"succeed": "yes"})
 }
 
-func Delete(c fiber.Ctx) error {
+func DeleteOne(c fiber.Ctx) error {
 	var id = c.Params("id")
 	log.Printf("Delete: id=%s\n", id)
 
