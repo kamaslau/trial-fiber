@@ -98,20 +98,21 @@ func FindOne(c fiber.Ctx) error {
 	var id = c.Params("id")
 	log.Printf("FindOne: id=%s\n", id)
 
+	var filter = map[string]any{"ID": id}
+
 	var data models.Post
 
-	conditions := map[string]any{"ID": id}
-
 	// Do Find
-	drivers.DBClient.Where(conditions).First(&data)
+	if err := drivers.DBClient.Where(filter).First(&data).Error; err != nil {
+		if err.Error() == "record not found" {
+			return c.Status(http.StatusNotFound).JSON(handlers.GetHTTPMsg(http.StatusNotFound))
+		}
 
-	// Output
-	if data.ID == 0 {
-		return c.Status(http.StatusNotFound).JSON(handlers.GetHTTPMsg(http.StatusNotFound))
-	} else {
-		response := fiber.Map{"succeed": true, "data": data}
-		return c.JSON(response)
+		log.Printf("FindOne: database query failed: %v", err)
+		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
+
+	return c.JSON(fiber.Map{"succeed": true, "data": data})
 }
 
 func Create(c fiber.Ctx) error {
