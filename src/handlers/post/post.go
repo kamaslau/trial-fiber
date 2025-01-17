@@ -14,6 +14,15 @@ import (
 func Count(c fiber.Ctx) error {
 	log.Println("Count: ")
 
+	// Filter
+	var filter = map[string]any{}
+	if err := handlers.ComposeFilter(c, &filter); err != nil {
+		log.Println(err)
+		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
+	} else {
+		// log.Printf("filter: %#v\n", filter)
+	}
+
 	var count int64
 	drivers.DBClient.Model(&models.Post{}).Count(&count)
 
@@ -80,7 +89,7 @@ func FindOne(c fiber.Ctx) error {
 
 	conditions := map[string]any{"ID": id}
 
-	// Do
+	// Do Find
 	drivers.DBClient.Where(conditions).First(&data)
 
 	// Output
@@ -105,7 +114,7 @@ func Create(c fiber.Ctx) error {
 	}
 	payload.UUID = uuid.NewString()
 
-	// Do
+	// Do Create
 	result := drivers.DBClient.Create(&payload)
 
 	// Output
@@ -149,7 +158,7 @@ func UpdateOne(c fiber.Ctx) error {
 	data.Content = payload.Content
 	data.Excerpt = payload.Excerpt
 
-	// Do
+	// Do Update
 	result := drivers.DBClient.Save(&data)
 	log.Printf("result: %#v\n", &result)
 	if result.RowsAffected != 1 {
@@ -173,7 +182,7 @@ func DeleteOne(c fiber.Ctx) error {
 		return c.Status(404).JSON(handlers.GetHTTPStatus(404))
 	}
 
-	// Do
+	// Do Delete
 	result := drivers.DBClient.Where(conditions).Delete(&models.Post{})
 	if result.RowsAffected != 1 {
 		log.Println(result.Error)

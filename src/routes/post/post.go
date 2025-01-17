@@ -10,10 +10,10 @@ func InitRoutes(router fiber.Router) {
 	route := router.Group("/post")
 
 	route.Get("/count", post.Count)
-	// curl "http://localhost:3000/post/count"
+	// curl "http://localhost:3000/post/count?filter=name:tft_dasd,excerpt:n_null"
 
 	route.Get("/", post.Find)
-	// curl "http://localhost:3000/post?limit=5&offset=0&sorter=name+desc&filter=name:tft_dasd,excerpt:nn"
+	// curl "http://localhost:3000/post?limit=5&offset=0&sorter=name+desc&filter=name:tft_dasd,excerpt:n_null"
 
 	route.Get("/:id", post.FindOne)
 	// curl "http://localhost:3000/post/1"

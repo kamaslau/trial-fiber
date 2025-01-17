@@ -14,10 +14,20 @@ type Pager struct {
 	Offset int `query:"offset"`
 }
 
+var FilterOps = map[string]string{
+	"n":  "NOT",
+	"eq":  "=", // equal to
+	"lt":  "<", // less than
+	"gt":  ">", // greater than
+	"lte": "<=", // less than or equal to
+	"gte": ">=", // greater than or equal to
+	"tft": "FULLTEXT", // full text search
+	"ts":  "START", // start with
+	"te":  "END", // end with
+	"tx":   "EXACT", // exact match
+}
+
 // TODO ComposeFilter Compose filter map
-// Operators:
-// COMPARE: n for not, nn for not null, e for equal, l for less, g for greater, le for less or equal, ge for greater or equal
-// TEXT: tft for full text, ts for start, te for end, t for exact
 func ComposeFilter(c fiber.Ctx, filter *map[string]any) error {
 	var filters = strings.Split(c.Query("filter"), ",")
 	// log.Printf("filters: %#v\n", filters)
@@ -29,7 +39,7 @@ func ComposeFilter(c fiber.Ctx, filter *map[string]any) error {
 		// log.Printf("item: %#v\n", item)
 
 		var parts = strings.Split(item[len(item)-1], "_")
-		var rule = fmt.Sprintf("%s %s", parts[0], parts[len(parts)-1])
+		var rule = fmt.Sprintf("%s %s", FilterOps[parts[0]], parts[len(parts)-1])
 
 		// log.Printf("item %s parts: %#v %s\n", item[0], parts, rule)
 		// TODO Interpret the rule
