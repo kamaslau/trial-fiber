@@ -37,21 +37,19 @@ func Find(c fiber.Ctx) error {
 		log.Println(err)
 		return c.Status(http.StatusUnprocessableEntity).JSON(handlers.GetHTTPMsg(http.StatusUnprocessableEntity))
 	}
+	// log.Printf("filter: %#v\n", filter)
+
+	// Query Instance
+	var query = drivers.DBClient.Where(filter)
 
 	// Do Count
 	var count int64
-	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
+	if err := query.Model(&models.Post{}).Count(&count).Error; err != nil {
+		log.Println(err)
+		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
+	}
 	if count == 0 {
 		return c.Status(http.StatusNotFound).JSON(handlers.GetHTTPMsg(http.StatusNotFound))
-	}
-
-	// Pager
-	var pager = new(handlers.Pager)
-	if err := c.Bind().Query(pager); err != nil {
-		log.Println(err)
-		return c.Status(http.StatusUnprocessableEntity).JSON(handlers.GetHTTPMsg(http.StatusUnprocessableEntity))
-	} else {
-		// log.Printf("pager: %#v\n", pager)
 	}
 
 	// Sorter
@@ -61,14 +59,26 @@ func Find(c fiber.Ctx) error {
 		// log.Printf("sorter: %#v\n", sorter)
 	}
 
+	// Pager
+	var pager = new(handlers.Pager)
+	if err := c.Bind().Query(pager); err != nil {
+		log.Println(err)
+		return c.Status(http.StatusUnprocessableEntity).JSON(handlers.GetHTTPMsg(http.StatusUnprocessableEntity))
+	}
+	// log.Printf("pager: %#v\n", pager)
+
 	// Do Find
 	var data []models.Post
 	if count > int64(pager.Offset) {
-		drivers.DBClient.Where(filter).Order(sorter).Limit(pager.Limit).Offset(pager.Offset).Find(&data)
+		query.Order(sorter).Limit(pager.Limit).Offset(pager.Offset).Find(&data)
+
+		if err := query.Order(sorter).Limit(pager.Limit).Offset(pager.Offset).Find(&data).Error; err != nil {
+			log.Println(err)
+			return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
+		}
 	}
 
-	// Output
-	response := fiber.Map{
+	return c.JSON(fiber.Map{
 		"succeed": "yes",
 		"count":   count,
 		"data":    data,
@@ -77,8 +87,7 @@ func Find(c fiber.Ctx) error {
 			"pager":  pager,
 			"sorter": sorter,
 		},
-	}
-	return c.JSON(response)
+	})
 }
 
 func FindOne(c fiber.Ctx) error {
