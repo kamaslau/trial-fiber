@@ -19,12 +19,10 @@ func Count(c fiber.Ctx) error {
 	if err := handlers.ComposeFilter(c, &filter); err != nil {
 		log.Println(err)
 		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
-	} else {
-		// log.Printf("filter: %#v\n", filter)
 	}
 
 	var count int64
-	drivers.DBClient.Model(&models.Post{}).Count(&count)
+	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
 
 	return c.JSON(fiber.Map{"count": count})
 }
@@ -37,8 +35,6 @@ func Find(c fiber.Ctx) error {
 	if err := handlers.ComposeFilter(c, &filter); err != nil {
 		log.Println(err)
 		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
-	} else {
-		// log.Printf("filter: %#v\n", filter)
 	}
 
 	// Do Count

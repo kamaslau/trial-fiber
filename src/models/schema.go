@@ -10,5 +10,5 @@ type Post struct {
 	Name string
 
 	Content string
-	Excerpt *string `gorm:"type:varchar(255)"` // Optional field name
+	Excerpt *string `gorm:"type:varchar(255)"` // Optional field name, * means nullable
 }
