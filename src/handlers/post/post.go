@@ -121,24 +121,38 @@ func Create(c fiber.Ctx) error {
 	// Parse payload
 	var payload models.Post
 	if err := c.Bind().Body(&payload); err != nil {
-		log.Println(err)
+		log.Printf("Create: failed to parse request body: %v", err)
 		return c.Status(http.StatusBadRequest).JSON(handlers.GetHTTPMsg(http.StatusBadRequest))
-	} else {
-		log.Printf("payload: %#v\n", &payload)
 	}
+
+	// Append metadata fields
 	payload.UUID = uuid.NewString()
+	// log.Printf("payload: %#v\n", &payload)
+
+	// Start transaction
+	tx := drivers.DBClient.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
 
 	// Do Create
-	result := drivers.DBClient.Create(&payload)
-
-	// Output
-	if result.RowsAffected == 1 {
-		response := fiber.Map{"succeed": true, "id": payload.ID}
-		return c.JSON(response)
-	} else {
-		log.Println(result.Error)
+	if err := tx.Create(&payload).Error; err != nil {
+		tx.Rollback()
+		log.Printf("Create: database operation failed: %v", err)
 		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
+
+	if err := tx.Commit().Error; err != nil {
+		log.Printf("Create: failed to commit transaction: %v", err)
+		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
+	}
+
+	return c.JSON(fiber.Map{
+		"succeed": true,
+		"id":      payload.ID,
+	})
 }
 
 func UpdateOne(c fiber.Ctx) error {
