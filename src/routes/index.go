@@ -24,6 +24,6 @@ func InitRoutes(app *fiber.App) {
 	// RESTful
 	post.InitRoutes(app)
 
-	// TODO GraphQL
+	// GraphQL
 	app.Post("/graphql", GraphQL)
 }
