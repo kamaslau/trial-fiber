@@ -157,28 +157,32 @@ func Create(c fiber.Ctx) error {
 
 func UpdateOne(c fiber.Ctx) error {
 	var id = c.Params("id")
-	log.Printf("Update: id=%s\n", id)
+	if id == "" {
+		log.Print("UpdateOne: failed to parse request id")
+		return c.Status(http.StatusBadRequest).JSON(handlers.GetHTTPMsg(http.StatusBadRequest))
+	}
+	log.Printf("UpdateOne: id=%s\n", id)
 
-	conditions := map[string]any{"ID": id}
+	filter := map[string]any{"ID": id}
 
 	// Lookup Target
 	var data models.Post
-	drivers.DBClient.Where(conditions).First(&data)
-	if data.ID == 0 {
-		return c.Status(http.StatusNotFound).JSON(handlers.GetHTTPMsg(http.StatusNotFound))
-	} else {
-		log.Printf("target: %#v\n", &data)
+	if err := drivers.DBClient.Where(filter).First(&data).Error; err != nil {
+		if err.Error() == "record not found" {
+			return c.Status(http.StatusNotFound).JSON(handlers.GetHTTPMsg(http.StatusNotFound))
+		}
+
+		log.Printf("UpdateOne: database query failed: %v", err)
+		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
 
 	// Parse payload
 	var payload models.Post
-	err := c.Bind().Body(&payload)
-	if err != nil {
-		log.Println(err)
+	if err := c.Bind().Body(&payload); err != nil {
+		log.Printf("UpdateOne: failed to parse request body: %v", err)
 		return c.Status(http.StatusBadRequest).JSON(handlers.GetHTTPMsg(http.StatusBadRequest))
-	} else {
-		log.Printf("payload: %#v\n", &payload)
 	}
+	// log.Printf("payload: %#v\n", &payload)
 
 	// Merge payload to current data
 	// TODO Optimize to map fields automatically
@@ -186,11 +190,23 @@ func UpdateOne(c fiber.Ctx) error {
 	data.Content = payload.Content
 	data.Excerpt = payload.Excerpt
 
+	// Start transaction
+	tx := drivers.DBClient.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	// Do Update
-	result := drivers.DBClient.Save(&data)
-	log.Printf("result: %#v\n", &result)
-	if result.RowsAffected != 1 {
-		log.Println(result.Error)
+	if err := tx.Save(&data).Error; err != nil {
+		tx.Rollback()
+		log.Printf("UpdateOne: failed to update record: %v", err)
+		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		log.Printf("UpdateOne: failed to commit transaction: %v", err)
 		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
 
