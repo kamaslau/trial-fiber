@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"net/http"
 	"strings"
 
 	"github.com/gofiber/fiber/v3"
@@ -33,20 +34,23 @@ func ComposeFilter(c fiber.Ctx, filter *map[string]any) error {
 	return nil
 }
 
-var HTTPStatus = map[uint16]string{
-	200: "OK",
-	201: "Created",
-	204: "No Content",
-	400: "Bad Request",
-	401: "Unauthorized",
-	403: "Forbidden",
-	404: "Not Found",
-	422: "Unprocessable Entity",
-	500: "Internal Server Error",
+var httpMessages = map[int]string{
+	http.StatusNoContent:           "No Content",
+	http.StatusBadRequest:          "Bad Request",
+	http.StatusUnauthorized:        "Unauthorized",
+	http.StatusForbidden:           "Forbidden",
+	http.StatusNotFound:            "Not Found",
+	http.StatusUnprocessableEntity: "Unprocessable Entity",
+	http.StatusInternalServerError: "Internal Server Error",
 }
 
-func GetHTTPMsg(code uint16) map[string]any {
+func GetHTTPMsg(code int) map[string]any {
+	message, exists := httpMessages[code]
+	if !exists {
+		message = http.StatusText(code)
+	}
 	return fiber.Map{
-		"message": HTTPStatus[code],
+		"code":    code,
+		"message": message,
 	}
 }
