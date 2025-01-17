@@ -23,17 +23,7 @@ func Count(c fiber.Ctx) error {
 func Find(c fiber.Ctx) error {
 	log.Println("Find: ")
 
-	var pager = new(handlers.Pager)
-	if err := c.Bind().Query(pager); err != nil {
-		log.Println(err)
-		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
-	} else {
-		// log.Printf("pager: %#v\n", pager)
-	}
-
-	var sorter = c.Query("sorter", "id desc")
-	// log.Printf("sorter: %#v\n", sorter)
-
+	// Filter
 	var filter = map[string]any{}
 	if err := handlers.ComposeFilter(c, &filter); err != nil {
 		log.Println(err)
@@ -45,10 +35,29 @@ func Find(c fiber.Ctx) error {
 	// Do Count
 	var count int64
 	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
+	if count == 0 {
+		return c.Status(404).JSON(handlers.GetHTTPStatus(404))
+	}
+
+	// Pager
+	var pager = new(handlers.Pager)
+	if err := c.Bind().Query(pager); err != nil {
+		log.Println(err)
+		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
+	} else {
+		// log.Printf("pager: %#v\n", pager)
+	}
+
+	// Sorter
+	var sorter = "id desc"
+	if count > 1 {
+		sorter = c.Query("sorter", "id desc")
+		// log.Printf("sorter: %#v\n", sorter)
+	}
 
 	// Do Find
 	var data []models.Post
-	if count > 0 && count > int64(pager.Offset) {
+	if count > int64(pager.Offset) {
 		drivers.DBClient.Where(filter).Order(sorter).Limit(pager.Limit).Offset(pager.Offset).Find(&data)
 	}
 
