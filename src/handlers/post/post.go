@@ -25,7 +25,7 @@ func Count(c fiber.Ctx) error {
 	var count int64
 	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
 
-	return c.JSON(fiber.Map{"succeed": "yes", "count": count})
+	return c.JSON(fiber.Map{"succeed": true, "count": count})
 }
 
 func Find(c fiber.Ctx) error {
@@ -79,7 +79,7 @@ func Find(c fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"succeed": "yes",
+		"succeed": true,
 		"count":   count,
 		"data":    data,
 		"metadata": fiber.Map{
@@ -105,7 +105,7 @@ func FindOne(c fiber.Ctx) error {
 	if data.ID == 0 {
 		return c.Status(http.StatusNotFound).JSON(handlers.GetHTTPMsg(http.StatusNotFound))
 	} else {
-		response := fiber.Map{"succeed": "yes", "data": data}
+		response := fiber.Map{"succeed": true, "data": data}
 		return c.JSON(response)
 	}
 }
@@ -128,7 +128,7 @@ func Create(c fiber.Ctx) error {
 
 	// Output
 	if result.RowsAffected == 1 {
-		response := fiber.Map{"succeed": "yes", "id": payload.ID}
+		response := fiber.Map{"succeed": true, "id": payload.ID}
 		return c.JSON(response)
 	} else {
 		log.Println(result.Error)
@@ -175,7 +175,7 @@ func UpdateOne(c fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
 
-	return c.JSON(fiber.Map{"succeed": "yes"})
+	return c.JSON(fiber.Map{"succeed": true})
 }
 
 func DeleteOne(c fiber.Ctx) error {
@@ -198,5 +198,5 @@ func DeleteOne(c fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
 
-	return c.JSON(fiber.Map{"succeed": "yes"})
+	return c.JSON(fiber.Map{"succeed": true})
 }
