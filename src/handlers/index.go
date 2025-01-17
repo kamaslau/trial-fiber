@@ -15,6 +15,10 @@ type Pager struct {
 
 // ComposeFilter Compose filter map
 func ComposeFilter(c fiber.Ctx, filter *map[string]any) error {
+	if c.Query("filter") == "" {
+		return nil
+	}
+
 	var filters = strings.Split(c.Query("filter"), ",")
 	// log.Printf("filters: %#v\n", filters)
 
