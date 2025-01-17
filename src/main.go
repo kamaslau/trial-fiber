@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	"app/src/drivers"
 	"app/src/routes"
@@ -14,18 +13,25 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// loadEnv Load env variable(s) from .env file
 func loadEnv() {
 	if err := godotenv.Load(".env"); err != nil {
 		log.Fatalf("Fail loading .env: %s", err)
 	}
 }
 
+// Initiate Service Components first, fail fast so we can break early
+func initServices() {
+	drivers.ConnectDB()    // Exit on failure
+	drivers.ConnectCache() // Warning on failure
+	drivers.ConnectMQ()    // Warning on failure
+}
+
 func startUp(app *fiber.App) {
 	var port = "3000"
 
-	if strings.Count(os.Getenv("PORT"), "") > 0 {
+	if port = os.Getenv("PORT"); port != "" {
 		log.Printf("👂 env.PORT: \033[33m%s\033[0m", os.Getenv("PORT"))
-		port = os.Getenv("PORT")
 	}
 
 	if err := app.Listen(fmt.Sprintf(":%s", port)); err != nil {
@@ -33,23 +39,15 @@ func startUp(app *fiber.App) {
 	}
 }
 
-func initServices() {
-	drivers.ConnectDB()    // Exit on failure
-	drivers.ConnectCache() // Warning on failure
-	drivers.ConnectMQ()    // Warning on failure
-}
-
 func main() {
-	loadEnv() // Load env variable(s)
-
-	// Initiate Service Components first, fail fast so we can break ea
+	loadEnv()
 	initServices()
 
 	app := fiber.New()
 
 	// Routes
 	routes.InitRoutes(app)
-	app.Use("/", static.New("./public"))
+	app.Use("/", static.New("./public")) // Serve static files from ./public
 
 	startUp(app)
 }
