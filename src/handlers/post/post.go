@@ -18,7 +18,7 @@ func Count(c fiber.Ctx) error {
 	var filter = map[string]any{}
 	if err := handlers.ComposeFilter(c, &filter); err != nil {
 		log.Println(err)
-		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
+		return c.Status(422).JSON(handlers.GetHTTPMsg(422))
 	}
 
 	var count int64
@@ -34,21 +34,21 @@ func Find(c fiber.Ctx) error {
 	var filter = map[string]any{}
 	if err := handlers.ComposeFilter(c, &filter); err != nil {
 		log.Println(err)
-		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
+		return c.Status(422).JSON(handlers.GetHTTPMsg(422))
 	}
 
 	// Do Count
 	var count int64
 	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
 	if count == 0 {
-		return c.Status(404).JSON(handlers.GetHTTPStatus(404))
+		return c.Status(404).JSON(handlers.GetHTTPMsg(404))
 	}
 
 	// Pager
 	var pager = new(handlers.Pager)
 	if err := c.Bind().Query(pager); err != nil {
 		log.Println(err)
-		return c.Status(422).JSON(handlers.GetHTTPStatus(422))
+		return c.Status(422).JSON(handlers.GetHTTPMsg(422))
 	} else {
 		// log.Printf("pager: %#v\n", pager)
 	}
@@ -90,7 +90,7 @@ func FindOne(c fiber.Ctx) error {
 
 	// Output
 	if data.ID == 0 {
-		return c.Status(404).JSON(handlers.GetHTTPStatus(404))
+		return c.Status(404).JSON(handlers.GetHTTPMsg(404))
 	} else {
 		response := fiber.Map{"data": data}
 		return c.JSON(response)
@@ -104,7 +104,7 @@ func Create(c fiber.Ctx) error {
 	var payload models.Post
 	if err := c.Bind().Body(&payload); err != nil {
 		log.Println(err)
-		return c.Status(400).JSON(handlers.GetHTTPStatus(400))
+		return c.Status(400).JSON(handlers.GetHTTPMsg(400))
 	} else {
 		log.Printf("payload: %#v\n", &payload)
 	}
@@ -119,7 +119,7 @@ func Create(c fiber.Ctx) error {
 		return c.JSON(response)
 	} else {
 		log.Println(result.Error)
-		return c.Status(500).JSON(handlers.GetHTTPStatus(500))
+		return c.Status(500).JSON(handlers.GetHTTPMsg(500))
 	}
 }
 
@@ -133,7 +133,7 @@ func UpdateOne(c fiber.Ctx) error {
 	var data models.Post
 	drivers.DBClient.Where(conditions).First(&data)
 	if data.ID == 0 {
-		return c.Status(404).JSON(handlers.GetHTTPStatus(404))
+		return c.Status(404).JSON(handlers.GetHTTPMsg(404))
 	} else {
 		log.Printf("target: %#v\n", &data)
 	}
@@ -143,7 +143,7 @@ func UpdateOne(c fiber.Ctx) error {
 	err := c.Bind().Body(&payload)
 	if err != nil {
 		log.Println(err)
-		return c.Status(400).JSON(handlers.GetHTTPStatus(400))
+		return c.Status(400).JSON(handlers.GetHTTPMsg(400))
 	} else {
 		log.Printf("payload: %#v\n", &payload)
 	}
@@ -159,7 +159,7 @@ func UpdateOne(c fiber.Ctx) error {
 	log.Printf("result: %#v\n", &result)
 	if result.RowsAffected != 1 {
 		log.Println(result.Error)
-		return c.Status(500).JSON(handlers.GetHTTPStatus(500))
+		return c.Status(500).JSON(handlers.GetHTTPMsg(500))
 	}
 
 	return c.JSON(fiber.Map{"succeed": "yes"})
@@ -175,14 +175,14 @@ func DeleteOne(c fiber.Ctx) error {
 	var data []models.Post
 	drivers.DBClient.Where(conditions).Find(&data) // No need to add 'deleted_at is null', GORM adds it by default with gorm.Model from type
 	if len(data) == 0 {
-		return c.Status(404).JSON(handlers.GetHTTPStatus(404))
+		return c.Status(404).JSON(handlers.GetHTTPMsg(404))
 	}
 
 	// Do Delete
 	result := drivers.DBClient.Where(conditions).Delete(&models.Post{})
 	if result.RowsAffected != 1 {
 		log.Println(result.Error)
-		return c.Status(500).JSON(handlers.GetHTTPStatus(500))
+		return c.Status(500).JSON(handlers.GetHTTPMsg(500))
 	}
 
 	return c.JSON(fiber.Map{"succeed": "yes"})
