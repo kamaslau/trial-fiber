@@ -215,21 +215,42 @@ func UpdateOne(c fiber.Ctx) error {
 
 func DeleteOne(c fiber.Ctx) error {
 	var id = c.Params("id")
+	if id == "" {
+		log.Print("DeleteOne: failed to parse request id")
+		return c.Status(http.StatusBadRequest).JSON(handlers.GetHTTPMsg(http.StatusBadRequest))
+	}
 	log.Printf("Delete: id=%s\n", id)
 
-	conditions := map[string]any{"ID": id}
+	filter := map[string]any{"ID": id}
 
-	// Lookup Target(s)
-	var data []models.Post
-	drivers.DBClient.Where(conditions).Find(&data) // No need to add 'deleted_at is null', GORM adds it by default with gorm.Model from type
-	if len(data) == 0 {
-		return c.Status(http.StatusNotFound).JSON(handlers.GetHTTPMsg(http.StatusNotFound))
+	// Lookup Target
+	var data models.Post
+	if err := drivers.DBClient.Where(filter).First(&data).Error; err != nil {
+		if err.Error() == "record not found" {
+			return c.Status(http.StatusNotFound).JSON(handlers.GetHTTPMsg(http.StatusNotFound))
+		}
+
+		log.Printf("DeleteOne: database query failed: %v", err)
+		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
 
+	// Start transaction
+	tx := drivers.DBClient.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	// Do Delete
-	result := drivers.DBClient.Where(conditions).Delete(&models.Post{})
-	if result.RowsAffected != 1 {
-		log.Println(result.Error)
+	if err := tx.Delete(&data).Error; err != nil {
+		tx.Rollback()
+		log.Printf("DeleteOne: failed to delete record: %v", err)
+		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		log.Printf("DeleteOne: failed to commit transaction: %v", err)
 		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
 
