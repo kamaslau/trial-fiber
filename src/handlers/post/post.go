@@ -18,12 +18,16 @@ func Count(c fiber.Ctx) error {
 	// Filter
 	var filter = map[string]any{}
 	if err := handlers.ComposeFilter(c, &filter); err != nil {
-		log.Println(err)
+		log.Printf("Count: filter composition failed: %v", err)
 		return c.Status(http.StatusUnprocessableEntity).JSON(handlers.GetHTTPMsg(http.StatusUnprocessableEntity))
 	}
+	// log.Printf("filter: %#v\n", filter)
 
 	var count int64
-	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
+	if err := drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count).Error; err != nil {
+		log.Printf("Count: database query failed: %v", err)
+		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
+	}
 
 	return c.JSON(fiber.Map{"succeed": true, "count": count})
 }
@@ -34,7 +38,7 @@ func Find(c fiber.Ctx) error {
 	// Filter
 	var filter = map[string]any{}
 	if err := handlers.ComposeFilter(c, &filter); err != nil {
-		log.Println(err)
+		log.Printf("Count: filter composition failed: %v", err)
 		return c.Status(http.StatusUnprocessableEntity).JSON(handlers.GetHTTPMsg(http.StatusUnprocessableEntity))
 	}
 	// log.Printf("filter: %#v\n", filter)
