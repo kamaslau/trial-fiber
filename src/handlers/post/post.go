@@ -24,7 +24,7 @@ func Count(c fiber.Ctx) error {
 	var count int64
 	drivers.DBClient.Where(filter).Model(&models.Post{}).Count(&count)
 
-	return c.JSON(fiber.Map{"count": count})
+	return c.JSON(fiber.Map{"succeed": "yes", "count": count})
 }
 
 func Find(c fiber.Ctx) error {
@@ -68,11 +68,14 @@ func Find(c fiber.Ctx) error {
 
 	// Output
 	response := fiber.Map{
-		"count":  count,
-		"data":   data,
-		"pager":  pager,
-		"sorter": sorter,
-		"filter": filter,
+		"succeed": "yes",
+		"count":   count,
+		"data":    data,
+		"metadata": fiber.Map{
+			"filter": filter,
+			"pager":  pager,
+			"sorter": sorter,
+		},
 	}
 	return c.JSON(response)
 }
@@ -92,7 +95,7 @@ func FindOne(c fiber.Ctx) error {
 	if data.ID == 0 {
 		return c.Status(404).JSON(handlers.GetHTTPMsg(404))
 	} else {
-		response := fiber.Map{"data": data}
+		response := fiber.Map{"succeed": "yes", "data": data}
 		return c.JSON(response)
 	}
 }
