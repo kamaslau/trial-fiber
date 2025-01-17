@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
+	"slices"
 	"strings"
 
 	"github.com/gofiber/fiber/v3"
@@ -15,7 +15,7 @@ type Pager struct {
 }
 
 // ComposeFilter Compose filter map
-func ComposeFilter(c fiber.Ctx, filter *map[string]any) error {
+func ComposeFilter(c fiber.Ctx, filter *map[string]any, allowedFields []string) error {
 	if c.Query("filter") == "" {
 		return nil
 	}
@@ -27,10 +27,16 @@ func ComposeFilter(c fiber.Ctx, filter *map[string]any) error {
 		var item = strings.Split(condition, ":")
 		// log.Printf("item: %#v\n", item)
 
+		if len(item) != 2 {
+			return c.Status(http.StatusBadRequest).JSON(GetHTTPMsg(http.StatusBadRequest))
+		} else if !slices.Contains(allowedFields, item[0]) {
+			return c.Status(http.StatusBadRequest).JSON(GetHTTPMsg(http.StatusBadRequest))
+		}
+
 		(*filter)[item[0]] = item[len(item)-1]
 	}
 
-	log.Printf("filter: %#v\n", filter)
+	// log.Printf("filter: %#v\n", filter)
 	return nil
 }
 

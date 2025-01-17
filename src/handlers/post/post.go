@@ -17,7 +17,8 @@ func Count(c fiber.Ctx) error {
 
 	// Filter
 	var filter = map[string]any{}
-	if err := handlers.ComposeFilter(c, &filter); err != nil {
+	var allowedFields = []string{"name"}
+	if err := handlers.ComposeFilter(c, &filter, allowedFields); err != nil {
 		log.Printf("Count: filter composition failed: %v", err)
 		return c.Status(http.StatusUnprocessableEntity).JSON(handlers.GetHTTPMsg(http.StatusUnprocessableEntity))
 	}
@@ -37,7 +38,8 @@ func Find(c fiber.Ctx) error {
 
 	// Filter
 	var filter = map[string]any{}
-	if err := handlers.ComposeFilter(c, &filter); err != nil {
+	var allowedFields = []string{"name"}
+	if err := handlers.ComposeFilter(c, &filter, allowedFields); err != nil {
 		log.Printf("Count: filter composition failed: %v", err)
 		return c.Status(http.StatusUnprocessableEntity).JSON(handlers.GetHTTPMsg(http.StatusUnprocessableEntity))
 	}
