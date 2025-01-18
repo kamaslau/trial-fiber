@@ -1,9 +1,10 @@
 package drivers
 
 import (
+	"fmt"
 	"log"
 	"os"
-	"strconv"
+	"time"
 
 	"app/src/models"
 
@@ -40,14 +41,23 @@ func logOnConnected() {
 	var payload = models.Post{
 		UUID:    uuid.NewString(),
 		Name:    "DB connected",
-		Content: "This is an auto generated message on database connection succeed.",
+		Content: fmt.Sprintf("This is an auto generated message on database connection succeed at %s", time.Now().Format(time.RFC3339)),
 	}
 
-	result := DBClient.Create(&payload)
-	if result.RowsAffected == 1 {
-		log.Print("└ Succeed inserting data ID:" + strconv.Itoa(int(payload.ID)))
-	} else {
-		log.Print(result.Error)
-		panic("failed to insert data")
+	if err := DBClient.Create(&payload).Error; err != nil {
+		log.Printf("└ Failed to insert data: %v", err)
+		return
+	}
+	log.Printf("└ Succeed to insert data ID: %d", payload.ID)
+}
+
+// CloseDB Terminate present database connection (if any)
+func CloseDB() {
+	if DBClient != nil {
+		if sqlDB, err := DBClient.DB(); err == nil {
+			sqlDB.Close()
+
+			log.Print("数据库连接已关闭")
+		}
 	}
 }
