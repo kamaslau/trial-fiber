@@ -7,83 +7,113 @@
 	},
 	"item": [
 		{
-			"name": "post",
+			"name": "RESTful",
 			"item": [
 				{
-					"name": "delete",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "localhost:3000/post/82",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"post",
-								"82"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "update",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"test update\",\r\n    \"content\": \"test contents\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "post",
+					"item": [
+						{
+							"name": "delete",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/post/82",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"post",
+										"82"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "localhost:3000/post/83",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"post",
-								"83"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"test create\",\r\n    \"content\": \"test contents\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+						{
+							"name": "update",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test update\",\r\n    \"content\": \"test contents\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/post/123",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"post",
+										"123"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "localhost:3000/post",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"post"
-							]
+						{
+							"name": "create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test create\",\r\n    \"content\": \"test contents\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/post",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"post"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				}
 			]
+		},
+		{
+			"name": "GraphQL",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\n    posts {\n        name\n        content\n        excerpt\n    }\n}\n",
+						"variables": "{}"
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/graphql",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

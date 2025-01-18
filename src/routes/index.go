@@ -25,5 +25,6 @@ func InitRoutes(app *fiber.App) {
 	post.InitRoutes(app)
 
 	// GraphQL
+	// curl -X POST -H "Content-Type: application/json" --data "{\"query\":\"{}\",\"variables\":{}}" http://localhost:3000/graphql
 	app.Post("/graphql", GraphQL)
 }
