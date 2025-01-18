@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"time"
+
 	"app/src/routes/post"
 
 	"github.com/gofiber/fiber/v3"
@@ -8,8 +10,16 @@ import (
 
 // healthCheck For monitoring
 func healthCheck(c fiber.Ctx) error {
+	now := time.Now()
+	zone, offset := now.Zone()
+
 	return c.JSON(fiber.Map{
 		"status": "ok",
+		"time": fiber.Map{
+			"timezone": zone,
+			"offset":   offset,
+			"unix":     now.Unix(),
+		},
 	})
 }
 
