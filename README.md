@@ -7,6 +7,7 @@ Template [Fiber framework](https://docs.gofiber.io/) project for fast prototypin
 
 Make sure that you have [Golang](https://go.dev/) installed already.
 
+- [GQLGen](https://gqlgen.com/) as GraphQL
 - [GORM](https://gorm.io/docs/) as ORM
 - [Redis](https://redis.io/docs/latest/) as Cache
 - [NATS](https://docs.nats.io/) as Message Queue
@@ -73,3 +74,4 @@ docker run --name trial-fiber -p 3000:3000 -d --restart always --net=host trial-
 ## References/Credits
 
 - [Go Fiber: Start Building RESTful APIs on Golang (Feat. GORM)](https://dev.to/percoguru/getting-started-with-apis-in-golang-feat-fiber-and-gorm-2n34)
+- [Building a GraphQL Server with Go Backend Tutorial | Getting Started](https://www.howtographql.com/graphql-go/0-introduction/)
