@@ -6,9 +6,9 @@ import (
 
 type Post struct {
 	gorm.Model
-	UUID string `gorm:"index;type:varchar(36)"`
-	Name string
+	UUID string `json:"uuid" gorm:"index;type:varchar(36)"`
+	Name string `json:"name"`
 
-	Content string
-	Excerpt *string `gorm:"type:varchar(255)"` // Optional field name, * means nullable
+	Content string  `json:"content"`
+	Excerpt *string `json:"excerpt" gorm:"type:varchar(255)"` // Optional field name, * means nullable
 }
