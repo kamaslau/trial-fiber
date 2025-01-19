@@ -18,11 +18,10 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "localhost:3000/post/82",
+									"raw": "{{root_url}}/post/82",
 									"host": [
-										"localhost"
+										"{{root_url}}"
 									],
-									"port": "3000",
 									"path": [
 										"post",
 										"82"
@@ -46,11 +45,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:3000/post/123",
+									"raw": "{{root_url}}/post/123",
 									"host": [
-										"localhost"
+										"{{root_url}}"
 									],
-									"port": "3000",
 									"path": [
 										"post",
 										"123"
@@ -74,13 +72,75 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:3000/post",
+									"raw": "{{root_url}}/post",
 									"host": [
-										"localhost"
+										"{{root_url}}"
 									],
-									"port": "3000",
 									"path": [
 										"post"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "find",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{root_url}}{{rest_path}}/post?limit=1&offset=0",
+									"host": [
+										"{{root_url}}{{rest_path}}"
+									],
+									"path": [
+										"post"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "1"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "count",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{root_url}}{{rest_path}}/post/count",
+									"host": [
+										"{{root_url}}{{rest_path}}"
+									],
+									"path": [
+										"post",
+										"count"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "findOne",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{root_url}}{{rest_path}}/post/200",
+									"host": [
+										"{{root_url}}{{rest_path}}"
+									],
+									"path": [
+										"post",
+										"200"
 									]
 								}
 							},
@@ -103,17 +163,50 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:3000/graphql",
+					"raw": "{{root_url}}/graphql",
 					"host": [
-						"localhost"
+						"{{root_url}}"
 					],
-					"port": "3000",
 					"path": [
 						"graphql"
 					]
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "root_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "rest_path",
+			"value": "/api/v1",
+			"type": "string"
 		}
 	]
 }
