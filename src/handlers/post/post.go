@@ -62,12 +62,16 @@ func Find(c fiber.Ctx) error {
 	var sorter = "id desc"
 	if count > 1 {
 		sorter = c.Query("sorter", "id desc")
-		// log.Printf("sorter: %#v\n", sorter)
 	}
+	// log.Printf("sorter: %#v\n", sorter)
 
 	// Pager
-	var pager = new(handlers.Pager)
-	if err := c.Bind().Query(pager); err != nil {
+	// var pager = new(handlers.Pager)
+	var pager = handlers.Pager{
+		Limit:  10,
+		Offset: 0,
+	}
+	if err := c.Bind().Query(&pager); err != nil {
 		log.Println(err)
 		return c.Status(http.StatusUnprocessableEntity).JSON(handlers.GetHTTPMsg(http.StatusUnprocessableEntity))
 	}
