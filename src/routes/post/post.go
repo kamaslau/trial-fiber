@@ -6,7 +6,11 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-func InitRoutes(router fiber.Router) {
+func InitRoutes(router fiber.Router) error {
+	if router == nil {
+		return fiber.NewError(fiber.StatusInternalServerError, "router instance is nil")
+	}
+
 	route := router.Group("/post")
 
 	route.Get("/count", post.Count)
@@ -26,4 +30,6 @@ func InitRoutes(router fiber.Router) {
 
 	route.Delete("/:id", post.DeleteOne)
 	// curl -X DELETE http://localhost:3000/api/v1/post/1
+
+	return nil
 }
