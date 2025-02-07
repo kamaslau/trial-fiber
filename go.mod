@@ -7,7 +7,7 @@ require (
 	github.com/gofiber/fiber/v3 v3.0.0-beta.4
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
-	github.com/nats-io/nats.go v1.38.0
+	github.com/nats-io/nats.go v1.39.0
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/vektah/gqlparser/v2 v2.5.21
 	gorm.io/driver/mysql v1.5.7
