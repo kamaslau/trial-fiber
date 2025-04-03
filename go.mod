@@ -7,7 +7,7 @@ require (
 	github.com/gofiber/fiber/v3 v3.0.0-beta.4
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
-	github.com/nats-io/nats.go v1.40.1
+	github.com/nats-io/nats.go v1.41.0
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/vektah/gqlparser/v2 v2.5.23
 	gorm.io/driver/mysql v1.5.7
@@ -25,7 +25,7 @@ require (
 	github.com/go-sql-driver/mysql v1.9.1 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/gofiber/schema v1.3.0 // indirect
-	github.com/gofiber/utils/v2 v2.0.0-beta.7 // indirect
+	github.com/gofiber/utils/v2 v2.0.0-beta.8 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
@@ -41,7 +41,7 @@ require (
 	github.com/tinylib/msgp v1.2.5 // indirect
 	github.com/urfave/cli/v2 v2.27.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.59.0 // indirect
+	github.com/valyala/fasthttp v1.60.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
