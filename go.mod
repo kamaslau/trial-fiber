@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/nats-io/nats.go v1.41.2
-	github.com/redis/go-redis/v9 v9.7.3
+	github.com/redis/go-redis/v9 v9.8.0
 	github.com/vektah/gqlparser/v2 v2.5.26
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.26.0
