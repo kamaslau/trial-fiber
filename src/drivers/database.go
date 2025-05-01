@@ -9,7 +9,8 @@ import (
 	"app/src/models"
 
 	"github.com/google/uuid"
-	"gorm.io/driver/mysql"
+	// "gorm.io/driver/mysql" // FYI
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -22,12 +23,16 @@ func ConnectDB() {
 	DB_DSN := os.Getenv("DB_DSN")
 	// log.Print("DB_DSN: ", DB_DSN)
 
+	if DB_DSN == "" {
+		panic("❌ Database configs not found")
+	}
+
 	// GORM confs
 	options := &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Error),
 	}
 
-	if db, err := gorm.Open(mysql.Open(DB_DSN), options); err != nil {
+	if db, err := gorm.Open(postgres.Open(DB_DSN), options); err != nil {
 		panic("❌ failed to connect database: " + err.Error())
 	} else {
 		DBClient = db

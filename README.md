@@ -8,7 +8,7 @@ Template [Fiber framework](https://docs.gofiber.io/) project for fast prototypin
 Make sure that you have [Golang](https://go.dev/) installed already.
 
 - [GQLGen](https://gqlgen.com/) as GraphQL
-- [GORM](https://gorm.io/docs/) as ORM
+- [GORM](https://gorm.io/docs/) as ORM, to operate Postgres Database
 - [Redis](https://redis.io/docs/latest/) as Cache
 - [NATS](https://docs.nats.io/) as Message Queue
 
@@ -25,9 +25,11 @@ go env GOPROXY # Double check
 
 ## Usage
 
+Create a `trial-fiber` database (you can use another name, just need to config it in .env file) in Postgres/MySQL/MariaDB of yours, then follow these steps below:
+
 ```bash
 # Create .env file
-cp .env.sample .env # specify database connection info
+cp .env.sample .env # at least specify a database connection info
 
 # Install dependencies
 go get ./src
