@@ -44,11 +44,11 @@ func ConnectDB() {
 		panic("failed to migrate database: " + err.Error())
 	}
 
-	logOnConnected()
+	// logOnDBConnected()
 }
 
-// logOnConnected 写日志：数据库连接成功
-func logOnConnected() {
+// logOnDBConnected 写日志：数据库连接成功
+func logOnDBConnected() {
 	var payload = models.Post{
 		UUID:    uuid.NewString(),
 		Name:    "DB connected",
