@@ -8,7 +8,7 @@ Template [Fiber framework](https://docs.gofiber.io/) project for fast prototypin
 Make sure that you have [Golang](https://go.dev/) installed already.
 
 - ~~[Removed] [GQLGen](https://gqlgen.com/) as GraphQL~~
-- [GORM](https://gorm.io/docs/) as ORM, to [operate with Postgres database](https://gorm.io/docs/connecting_to_the_database.html#PostgreSQL)
+- [GORM](https://gorm.io/docs/) as ORM, to [operate with Postgre database](https://gorm.io/docs/connecting_to_the_database.html#PostgreSQL)
 - [Redis](https://redis.io/docs/latest/) as Cache
 - [NATS](https://docs.nats.io/) as Message Queue
 - [InfluxDB](https://docs.influxdata.com/) for Time Series Data (logs, etc.)
@@ -47,7 +47,7 @@ http://127.0.0.1:3000/graphql/ \
 
 ## Usage
 
-Create a `trial-fiber` database (you can use another name, just config it in the `.env` file) in Postgres/MySQL/MariaDB of yours, then follow these steps below.
+Create a `trial-fiber` database (you can use another name, just config it in the `.env` file) in Postgre/MySQL/MariaDB of yours, then follow these steps below.
 
 ```bash
 # Create .env file
