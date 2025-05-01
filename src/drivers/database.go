@@ -27,19 +27,19 @@ func ConnectDB() {
 		panic("❌ Database configs not found")
 	}
 
-	// GORM confs
-	options := &gorm.Config{
+	// Confs
+	configs := &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Error),
 	}
 
-	if db, err := gorm.Open(postgres.Open(DB_DSN), options); err != nil {
+	if db, err := gorm.Open(postgres.Open(DB_DSN), configs); err != nil {
 		panic("❌ failed to connect database: " + err.Error())
 	} else {
 		DBClient = db
 		log.Print("👍 Database connected")
 	}
 
-	// https://gorm.io/docs/migration.html#Auto-Migration
+	// [Optional] https://gorm.io/docs/migration.html#Auto-Migration
 	if err := DBClient.AutoMigrate(&models.Post{}); err != nil {
 		panic("failed to migrate database: " + err.Error())
 	}

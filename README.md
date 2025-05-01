@@ -7,10 +7,11 @@ Template [Fiber framework](https://docs.gofiber.io/) project for fast prototypin
 
 Make sure that you have [Golang](https://go.dev/) installed already.
 
-- [GQLGen](https://gqlgen.com/) as GraphQL
+- ~~[Removed] [GQLGen](https://gqlgen.com/) as GraphQL~~
 - [GORM](https://gorm.io/docs/) as ORM, to [operate with Postgres database](https://gorm.io/docs/connecting_to_the_database.html#PostgreSQL)
 - [Redis](https://redis.io/docs/latest/) as Cache
 - [NATS](https://docs.nats.io/) as Message Queue
+- [InfluxDB](https://docs.influxdata.com/) for Time Series Data (logs, etc.)
 
 ## [🇨🇳 Optional] Setup Mirror for Mainland China
 

@@ -24,6 +24,7 @@ func loadEnv() {
 func initServices() {
 	drivers.ConnectDB()    // Exit on failure
 	drivers.ConnectCache() // Warning on failure
+	drivers.ConnectTS()    // Warning on failure
 	drivers.ConnectMQ()    // Warning on failure
 }
 
