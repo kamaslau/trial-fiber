@@ -8,7 +8,7 @@ Template [Fiber framework](https://docs.gofiber.io/) project for fast prototypin
 Make sure that you have [Golang](https://go.dev/) installed already.
 
 - [GQLGen](https://gqlgen.com/) as GraphQL
-- [GORM](https://gorm.io/docs/) as ORM, to operate Postgres Database
+- [GORM](https://gorm.io/docs/) as ORM, to [operate with Postgres database](https://gorm.io/docs/connecting_to_the_database.html#PostgreSQL)
 - [Redis](https://redis.io/docs/latest/) as Cache
 - [NATS](https://docs.nats.io/) as Message Queue
 
@@ -23,9 +23,30 @@ go env -w GOPROXY=https://goproxy.cn,direct # QiniuCloud/七牛云
 go env GOPROXY # Double check
 ```
 
+## Service Endpoints
+
+### RESTful
+
+- Root: http://127.0.0.1:3000/api/v1/
+- Demo with _Posts_ model: http://127.0.0.1:3000/api/v1/post
+
+### GraphQL (TODO)
+
+- Root: [http://127.0.0.1:3000/graphql/](http://127.0.0.1:3000/graphql/)
+- Demo is not available for now
+
+```bash
+curl -X POST \
+http://127.0.0.1:3000/graphql/ \
+-H 'Content-Type: application/json' \
+-d '{
+  "query": "query { posts { id name } }"
+}'
+```
+
 ## Usage
 
-Create a `trial-fiber` database (you can use another name, just need to config it in .env file) in Postgres/MySQL/MariaDB of yours, then follow these steps below:
+Create a `trial-fiber` database (you can use another name, just config it in the `.env` file) in Postgres/MySQL/MariaDB of yours, then follow these steps below.
 
 ```bash
 # Create .env file
