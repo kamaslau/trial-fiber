@@ -15,6 +15,10 @@ func ConnectCache() {
 	REDIS_URL := os.Getenv("REDIS_URL")
 	// log.Print("REDIS_URL: ", REDIS_URL)
 
+	if REDIS_URL == "" {
+		log.Print("⛔ Cache configs not found")
+	}
+
 	if opts, err := redis.ParseURL(REDIS_URL); err != nil {
 		log.Print("⛔ Cache ", err)
 	} else {
