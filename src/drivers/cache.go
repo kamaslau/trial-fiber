@@ -17,6 +17,7 @@ func ConnectCache() {
 
 	if CACHE_URL == "" {
 		log.Print("⛔ Cache configs not found")
+		return
 	}
 
 	if opts, err := redis.ParseURL(CACHE_URL); err != nil {

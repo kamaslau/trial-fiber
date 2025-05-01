@@ -17,6 +17,7 @@ func ConnectMQ() {
 
 	if MQ_URL == "" {
 		log.Print("⛔ MQ configs not found")
+		return
 	}
 
 	if client, err := nats.Connect(MQ_URL); err != nil {
