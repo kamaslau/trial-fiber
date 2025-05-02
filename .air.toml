@@ -1,6 +1,4 @@
 root = "."
-testdata_dir = "testdata"
-tmp_dir = "tmp"
 
 [build]
   args_bin = []
@@ -12,7 +10,6 @@ tmp_dir = "tmp"
   exclude_regex = ["_test.go"]
   exclude_unchanged = false
   follow_symlink = false
-  full_bin = ""
   include_dir = []
   include_ext = ["go", "tpl", "tmpl", "html"]
   include_file = []
@@ -41,11 +38,6 @@ tmp_dir = "tmp"
 
 [misc]
   clean_on_exit = false
-
-[proxy]
-  app_port = 0
-  enabled = false
-  proxy_port = 0
 
 [screen]
   clear_on_rebuild = false
