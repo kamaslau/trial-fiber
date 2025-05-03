@@ -1,5 +1,6 @@
 # This workflow will build a golang project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+# https://docs.github.com/en/actions
 
 name: Test and Build
 
@@ -10,9 +11,16 @@ on:
   pull_request:
     branches: ["main"]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ${{ vars.REGISTRY || 'ghcr.io'}}
+
 jobs:
   build:
-    if: ${{ !contains(github.event.head_commit.message, '[skipCI]:') }}
+    # if: ${{ !contains(github.event.head_commit.message, '[skipCI]:') }} // DEPRECATED, use built-in [skip ci] instead
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
