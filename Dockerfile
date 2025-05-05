@@ -7,7 +7,7 @@ RUN go env GOPROXY # 确认信息
 FROM base AS builder
 COPY . .
 RUN go clean --modcache
-RUN go get
+RUN go mod tidy
 RUN go mod verify
 RUN go build -o main
 

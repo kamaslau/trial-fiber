@@ -1,7 +1,11 @@
 .git
 .github
+tmp
+.air.toml
 .dockerignore
 .env.sample
+.gitignore
 Dockerfile
+LICENSE
 README.md
-.air.toml
+*.postman_collection.json
