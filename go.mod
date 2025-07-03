@@ -41,7 +41,7 @@ require (
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/tinylib/msgp v1.3.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.62.0 // indirect
+	github.com/valyala/fasthttp v1.63.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	golang.org/x/crypto v0.39.0 // indirect
