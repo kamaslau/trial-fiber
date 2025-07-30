@@ -49,7 +49,7 @@ http://127.0.0.1:3000/graphql/ \
 
 Create a `trial-fiber` database (you can use another name, just config it in the `.env` file) in Postgre/MySQL/MariaDB of yours, then follow these steps below.
 
-```bash
+````bash
 # Create .env file
 cp .env.sample .env # at least specify a database connection info
 
@@ -66,24 +66,68 @@ go mod tidy
 go install github.com/air-verse/air@latest
 air init
 ### Change the .air.toml file generated
-#### macOS/Linux
+#### [Option A] Modify _.air.toml_ directly
+On macOS/Linux:
+``` toml
 [build]
 bin = "./tmp/main"
 cmd = "go build -o ./tmp/main ./src"
-#### Windows
+
+On Windows:
+
+```toml
 [build]
 bin = "tmp\\main.exe"
 cmd = "go build -o ./tmp/main.exe ./src"
+```
+
+#### [Option B] Use environment variables
+
+This approach has not yet been supported by Air, it doesn't parse env variables in _.air.toml_ yet. So just go to the Option C below.
+
+```toml
+[build]
+  # ...
+  bin = "${BIN_PATH}"
+  cmd = "${BUILD_CMD}"
+```
+
+On macOS/Linux:
+
+```bash
+export BIN_PATH="tmp/main"
+export BUILD_CMD="go build -o ./tmp/main ./src"
+```
+
+On Windows:
+
+```bash
+$env:BIN_PATH="tmp\main.exe"
+$env:BUILD_CMD="go build -o ./tmp/main.exe ./src"
+```
+#### [Option C] Run a preparing step
+
+``` bash
+go run ./tools/air-init.go
+```
+
 ### Use
+
+```bash
 air
+```
 
 ## Without live-reloading
+
 go run src/main.go
 
 # Compile
+
 ## Remember to put a .env file in to the same directory with the executable file compiled
+
 go build -o ./dist/main ./src
-```
+
+````
 
 ## Deploy with docker
 
