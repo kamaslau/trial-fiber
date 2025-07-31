@@ -2,7 +2,7 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
 # https://docs.github.com/en/actions
 
-name: Test and Build
+name: Test, Build and store Docker image
 
 on:
   workflow_dispatch:
@@ -17,13 +17,62 @@ concurrency:
 
 env:
   REGISTRY: ${{ vars.REGISTRY || 'ghcr.io'}}
+  DOCKER_BUILDKIT: 1
+  DOCKER_CLI_EXPERIMENTAL: enabled
 
 jobs:
-  build:
-    # if: ${{ !contains(github.event.head_commit.message, '[skipCI]:') }} // DEPRECATED, use built-in [skip ci] instead
+  test-build-and-push:
     runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      packages: write
+      actions: read
+      id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Action digest
+        run: |
+          echo "::group::Workflow Information"
+          echo "🎉 The job was triggered by '${{ github.event_name }}' event on branch '${{ github.ref }}' of repository '${{ github.repository_owner }}/${{ github.event.repository.name }}'"
+          echo "Running on '${{ runner.os }}/${{ runner.arch }}' runner"
+          echo "Operating image '${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.event.repository.name }}'"
+          echo "::endgroup::"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USER || github.actor }}
+          password: ${{ secrets.REGISTRY_TOKEN || secrets.GITHUB_TOKEN }}
+
+      # https://github.com/marketplace/actions/checkout
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Load env variables and write into .env file
+        shell: bash
+        run: |
+          # 使用 printf 而不是 echo 来处理特殊字符
+          printf '%s\n' "${{ secrets.ENV_FILE }}" > "${{ github.workspace }}/.env"
+
+          # 检查文件是否成功写入
+          if [ ! -f "${{ github.workspace }}/.env" ]; then
+            echo "::error::Failed to create .env file"
+            exit 1
+          fi
+
+          # 设置适当的文件权限
+          chmod 600 "${{ github.workspace }}/.env"
+
+          # 调试信息（仅在需要时启用）
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "::group::Environment File Debug"
+            echo "Debug: Environment file created successfully"
+            ls -l "${{ github.workspace }}/.env"
+            echo "::endgroup::"
+          fi
 
       - name: Extract Go version from go.mod
         id: goversion
@@ -37,5 +86,50 @@ jobs:
       - name: Test
         run: go test -v ./src
 
-      - name: Build
-        run: go build -o ./tmp/main ./src
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:master
+            network=host
+
+      # https://github.com/marketplace/actions/docker-metadata-action
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.event.repository.name }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,format=short,prefix=sha-
+            type=ref,event=branch
+            type=ref,event=pr
+
+      # https://github.com/marketplace/actions/build-and-push-docker-images
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.event.repository.name }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.event.repository.name }}:buildcache,mode=max
+          # platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
+
+      - name: Clean up Docker resources
+        shell: bash
+        run: |
+          echo "::group::Docker Cleanup"
+          docker builder prune -f
+          docker system prune -f --filter "until=24h"
+          echo "::endgroup::"
