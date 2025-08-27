@@ -18,7 +18,8 @@
 # vendor/
 
 # Env files
-.env
+.env*
+!.env.example
 
 # Misc
 tmp

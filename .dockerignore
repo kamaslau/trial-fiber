@@ -2,6 +2,7 @@
 .github
 tmp
 .air.toml
+.air.windows.toml
 .dockerignore
 .env.sample
 .gitignore
