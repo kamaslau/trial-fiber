@@ -13,6 +13,7 @@ RUN go build -o ./tmp/main ./src
 
 FROM base AS runner
 COPY --from=builder /app/tmp/main ./
+COPY public ./public
 COPY .env ./
 # 验证 .env 文件内容
 RUN echo "=== .env file content ===" && cat .env && echo "=== End of .env file ==="

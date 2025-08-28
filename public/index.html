@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon-gopher.png" sizes="any">
+    <style>
+      body {
+        color:white;background-color:darkred;text-align:center;
+        width:100vw;height:100vh;margin:0;
+        display:flex;flex-direction: column;align-items:center;justify-content: center;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById("user-info").innerText = navigator.userAgent+"\n";
+        document.getElementById("user-info").innerText += navigator.language;
+      });
+    </script>
+  </head>
+
+  <body>
+    <h1>Gateway</h1>
+    <p>
+      🛑 You are <strong>NOT</strong> allowed to visit, crawl, or with any approcach
+      exploit this service without dedicated permission/authorization.
+    </p>
+    <p id="user-info">Loading Browser Info</p>
+  </body>
+</html>
