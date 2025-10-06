@@ -6,7 +6,6 @@ WORKDIR /app
 
 FROM base AS builder
 COPY . .
-RUN go clean --modcache
 RUN go mod tidy
 RUN go mod verify
 RUN go build -o ./tmp/main ./src

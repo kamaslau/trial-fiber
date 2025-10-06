@@ -5,28 +5,13 @@ import (
 	"log"
 	"os"
 
-	"app/src/drivers"
-	"app/src/routes"
+	"app/src/internal/middlewares"
+	"app/src/internal/routes"
+	"app/src/internal/utils"
+	"app/src/internal/utils/drivers"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/static"
-	"github.com/joho/godotenv"
 )
-
-// loadEnv Load env variable(s) from .env file
-func loadEnv() {
-	if err := godotenv.Load(".env"); err != nil {
-		log.Fatalf("Fail loading .env: %s", err)
-	}
-}
-
-// Initiate Service Components first, fail fast so we can break early
-func initServices() {
-	drivers.ConnectDB()    // Exit on failure
-	drivers.ConnectCache() // Warning on failure
-	drivers.ConnectTS()    // Warning on failure
-	drivers.ConnectMQ()    // Warning on failure
-}
 
 func startUp(app *fiber.App) {
 	var port = "3000"
@@ -41,14 +26,13 @@ func startUp(app *fiber.App) {
 }
 
 func main() {
-	loadEnv()
-	initServices()
+	// Setup
+	utils.LoadEnv()
+	drivers.InitDrivers()
 
+	// Mount Middlewares and Route Handlers
 	app := fiber.New()
-
-	// Routes
+	app.Use(middlewares.TryToken)
 	routes.InitRoutes(app)
-	app.Use("/", static.New("./public")) // Serve static files from ./public
-
 	startUp(app)
 }

@@ -51,11 +51,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       - name: Load env variables and write into .env file
         shell: bash
         run: |
-          # 使用 printf 而不是 echo 来处理特殊字符
-          printf '%s\n' "${{ secrets.ENV_FILE }}" > "${{ github.workspace }}/.env"
+          # 创建 .env 文件，确保变量值被正确处理
+          cat > "${{ github.workspace }}/.env" << 'EOF'
+          ${{ secrets.ENV_FILE }}
+          EOF
 
           # 检查文件是否成功写入
           if [ ! -f "${{ github.workspace }}/.env" ]; then
@@ -63,14 +73,16 @@ jobs:
             exit 1
           fi
 
-          # 设置适当的文件权限
-          chmod 600 "${{ github.workspace }}/.env"
-
+          # 添加时间戳到 .env 文件以确保内容变化
+          echo "# Generated at $(date)" >> "${{ github.workspace }}/.env"
+          
           # 调试信息（仅在需要时启用）
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "::group::Environment File Debug"
             echo "Debug: Environment file created successfully"
             ls -l "${{ github.workspace }}/.env"
+            echo "File content:"
+            cat "${{ github.workspace }}/.env"
             echo "::endgroup::"
           fi
 
@@ -85,14 +97,6 @@ jobs:
 
       - name: Test
         run: go test -v ./src
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -121,8 +125,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.event.repository.name }}:buildcache
-          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.event.repository.name }}:buildcache,mode=max
+          no-cache: true  # 完全禁用缓存
           # platforms: linux/amd64,linux/arm64
           platforms: linux/amd64
 

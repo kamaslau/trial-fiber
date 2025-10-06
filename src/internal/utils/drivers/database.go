@@ -6,10 +6,9 @@ import (
 	"os"
 	"time"
 
-	"app/src/models"
+	"app/src/internal/models"
+	"app/src/internal/utils/uuid"
 
-	"github.com/google/uuid"
-	// "gorm.io/driver/mysql" // FYI
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -24,7 +23,7 @@ func ConnectDB() {
 	// log.Print("DB_DSN: ", DB_DSN)
 
 	if DB_DSN == "" {
-		panic("❌ Database configs not found")
+		panic("🛑 Database configs not found")
 	}
 
 	// Confs
@@ -33,18 +32,27 @@ func ConnectDB() {
 	}
 
 	if db, err := gorm.Open(postgres.Open(DB_DSN), configs); err != nil {
-		panic("❌ failed to connect database: " + err.Error())
+		panic("🛑 failed to connect database: " + err.Error())
 	} else {
 		DBClient = db
-		log.Print("👍 Database connected")
+		log.Print("✅ Database connected")
 	}
 
-	// [Optional] https://gorm.io/docs/migration.html#Auto-Migration
-	if err := DBClient.AutoMigrate(&models.Post{}); err != nil {
-		panic("failed to migrate database: " + err.Error())
-	}
+	logOnDBConnected()
+}
 
-	// logOnDBConnected()
+// CloseDB Terminate present database connection (if any)
+func CloseDB() {
+	if DBClient != nil {
+		if db, err := DBClient.DB(); err == nil {
+			if err := db.Close(); err != nil {
+				log.Printf("🛑 Failed to close database connection: %v", err)
+				return
+			}
+
+			log.Print("✅ Database connection closed safely")
+		}
+	}
 }
 
 // logOnDBConnected 写日志：数据库连接成功
@@ -60,18 +68,4 @@ func logOnDBConnected() {
 		return
 	}
 	log.Printf("└ Succeed to insert data ID: %d", payload.ID)
-}
-
-// CloseDB Terminate present database connection (if any)
-func CloseDB() {
-	if DBClient != nil {
-		if db, err := DBClient.DB(); err == nil {
-			if err := db.Close(); err != nil {
-				log.Printf("❌ Failed to close database connection: %v", err)
-				return
-			}
-
-			log.Print("✅ Database connection closed safely")
-		}
-	}
 }

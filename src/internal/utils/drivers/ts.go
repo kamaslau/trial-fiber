@@ -20,7 +20,7 @@ func ConnectTS() {
 	database := os.Getenv("TS_DATABASE")
 
 	if host == "" || token == "" || database == "" {
-		log.Print("⛔ TS configs not found")
+		log.Print("⚠️ TS configs not found")
 		return
 	}
 
@@ -31,11 +31,13 @@ func ConnectTS() {
 		Database: database,
 	}
 
+	// TODO debug this, won't break even fake config env is provided
 	if client, err := influxdb3.New(configs); err != nil {
-		log.Print("⛔ TS ", err)
+		log.Printf("🛑 TS connection failed: %v", err)
+		return
 	} else {
 		TSClient = client
-		log.Print("👍 TS connected")
+		log.Print("✅ TS connected")
 	}
 
 	logOnTSConnected()

@@ -15,7 +15,7 @@ type Pager struct {
 }
 
 // ComposeFilter Compose filter map
-func ComposeFilter(c fiber.Ctx, filter *map[string]any, allowedFields []string) error {
+func ComposeFilter(c fiber.Ctx, filter *map[string]any, allowedFields *[]string) error {
 	if c.Query("filter") == "" {
 		return nil
 	}
@@ -29,7 +29,7 @@ func ComposeFilter(c fiber.Ctx, filter *map[string]any, allowedFields []string) 
 
 		if len(item) != 2 {
 			return c.Status(http.StatusBadRequest).JSON(GetHTTPMsg(http.StatusBadRequest))
-		} else if !slices.Contains(allowedFields, item[0]) {
+		} else if !slices.Contains(*allowedFields, item[0]) {
 			return c.Status(http.StatusBadRequest).JSON(GetHTTPMsg(http.StatusBadRequest))
 		}
 

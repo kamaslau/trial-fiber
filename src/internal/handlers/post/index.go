@@ -1,24 +1,42 @@
 package post
 
 import (
+	"errors"
 	"log"
 	"net/http"
+	"reflect"
 
-	"app/src/drivers"
-	"app/src/handlers"
-	"app/src/models"
+	"app/src/internal/handlers"
+	"app/src/internal/middlewares"
+	"app/src/internal/models"
+	"app/src/internal/utils/drivers"
+	"app/src/internal/utils/uuid"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
+	"gorm.io/gorm"
 )
+
+const ModelName = "post"
 
 func Count(c fiber.Ctx) error {
 	log.Println("Count: ")
 
+	acRequirement := middlewares.ACRequirement{
+		Roles: []string{"adminer"},
+		Permissions: []string{
+			ModelName + "::read::all",
+		},
+	}
+	if err := middlewares.TryAC(c, acRequirement); err != nil {
+		log.Printf("🛑 TryAC failed: %v", err)
+		return err
+	}
+
 	// Filter
 	var filter = map[string]any{}
 	var allowedFields = []string{"name"}
-	if err := handlers.ComposeFilter(c, &filter, allowedFields); err != nil {
+	if err := handlers.ComposeFilter(c, &filter, &allowedFields); err != nil {
 		log.Printf("Count: filter composition failed: %v", err)
 		return c.Status(http.StatusUnprocessableEntity).JSON(handlers.GetHTTPMsg(http.StatusUnprocessableEntity))
 	}
@@ -36,10 +54,21 @@ func Count(c fiber.Ctx) error {
 func Find(c fiber.Ctx) error {
 	log.Println("Find: ")
 
+	acRequirement := middlewares.ACRequirement{
+		Roles: []string{"adminer"},
+		Permissions: []string{
+			ModelName + "::read::all",
+		},
+	}
+	if err := middlewares.TryAC(c, acRequirement); err != nil {
+		log.Printf("🛑 TryAC failed: %v", err)
+		return err
+	}
+
 	// Filter
 	var filter = map[string]any{}
 	var allowedFields = []string{"name"}
-	if err := handlers.ComposeFilter(c, &filter, allowedFields); err != nil {
+	if err := handlers.ComposeFilter(c, &filter, &allowedFields); err != nil {
 		log.Printf("Count: filter composition failed: %v", err)
 		return c.Status(http.StatusUnprocessableEntity).JSON(handlers.GetHTTPMsg(http.StatusUnprocessableEntity))
 	}
@@ -104,11 +133,21 @@ func FindOne(c fiber.Ctx) error {
 	var id = c.Params("id")
 	log.Printf("FindOne: id=%s\n", id)
 
-	var filter = map[string]any{"ID": id}
+	acRequirement := middlewares.ACRequirement{
+		Roles: []string{"adminer"},
+		Permissions: []string{
+			ModelName + "::read::all",
+		},
+	}
+	if err := middlewares.TryAC(c, acRequirement); err != nil {
+		log.Printf("🛑 TryAC failed: %v", err)
+		return err
+	}
 
-	var data models.Post
+	var filter = map[string]any{"id": id}
 
 	// Do Find
+	var data models.Post
 	if err := drivers.DBClient.Where(filter).First(&data).Error; err != nil {
 		if err.Error() == "record not found" {
 			return c.Status(http.StatusNotFound).JSON(handlers.GetHTTPMsg(http.StatusNotFound))
@@ -121,19 +160,31 @@ func FindOne(c fiber.Ctx) error {
 	return c.JSON(fiber.Map{"succeed": true, "data": data})
 }
 
-func Create(c fiber.Ctx) error {
-	log.Println("Create: ")
+func CreateOne(c fiber.Ctx) error {
+	acRequirement := middlewares.ACRequirement{
+		Roles: []string{"adminer"},
+		Permissions: []string{
+			ModelName + "::write::all",
+			ModelName + "::create::self",
+		},
+	}
+	if err := middlewares.TryAC(c, acRequirement); err != nil {
+		log.Printf("🛑 TryAC failed: %v", err)
+		return err
+	}
 
 	// Parse payload
-	var payload models.Post
+	var payload models.PostFieldsCreate
 	if err := c.Bind().Body(&payload); err != nil {
-		log.Printf("Create: failed to parse request body: %v", err)
+		log.Printf("CreateOne: failed to parse request body: %v", err)
 		return c.Status(http.StatusBadRequest).JSON(handlers.GetHTTPMsg(http.StatusBadRequest))
 	}
 
 	// Append metadata fields
-	payload.UUID = uuid.NewString()
-	// log.Printf("payload: %#v\n", &payload)
+	var dataset models.Post
+	copier.Copy(&dataset, &payload)
+	dataset.UUID = uuid.NewString()
+	// log.Printf("CreateOne: dataset: %#v\n", &dataset)
 
 	// Start transaction
 	tx := drivers.DBClient.Begin()
@@ -144,57 +195,74 @@ func Create(c fiber.Ctx) error {
 	}()
 
 	// Do Create
-	if err := tx.Create(&payload).Error; err != nil {
+	if err := tx.Create(&dataset).Error; err != nil {
 		tx.Rollback()
-		log.Printf("Create: database operation failed: %v", err)
+		log.Printf("CreateOne: database operation failed: %v", err)
 		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		log.Printf("Create: failed to commit transaction: %v", err)
+		log.Printf("CreateOne: failed to commit transaction: %v", err)
 		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
 
 	return c.JSON(fiber.Map{
 		"succeed": true,
-		"id":      payload.ID,
+		"id":      dataset.ID,
 	})
 }
 
 func UpdateOne(c fiber.Ctx) error {
-	var id = c.Params("id")
-	if id == "" {
-		log.Print("UpdateOne: failed to parse request id")
-		return c.Status(http.StatusBadRequest).JSON(handlers.GetHTTPMsg(http.StatusBadRequest))
-	}
+	id := c.Params("id")
 	log.Printf("UpdateOne: id=%s\n", id)
 
-	filter := map[string]any{"ID": id}
+	acRequirement := middlewares.ACRequirement{
+		Roles: []string{"adminer"},
+		Permissions: []string{
+			ModelName + "::write::all",
+			ModelName + "::update::self",
+		},
+	}
+	if err := middlewares.TryAC(c, acRequirement); err != nil {
+		log.Printf("🛑 TryAC failed: %v", err)
+		return err
+	}
 
-	// Lookup Target
-	var data models.Post
-	if err := drivers.DBClient.Where(filter).First(&data).Error; err != nil {
-		if err.Error() == "record not found" {
+	// Fetch Original
+	var data models.User
+	if err := drivers.DBClient.Where("id = ?", id).First(&data).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.Status(http.StatusNotFound).JSON(handlers.GetHTTPMsg(http.StatusNotFound))
 		}
-
-		log.Printf("UpdateOne: database query failed: %v", err)
 		return c.Status(http.StatusInternalServerError).JSON(handlers.GetHTTPMsg(http.StatusInternalServerError))
 	}
 
-	// Parse payload
-	var payload models.Post
+	// Parse Target
+	var payload models.User
 	if err := c.Bind().Body(&payload); err != nil {
-		log.Printf("UpdateOne: failed to parse request body: %v", err)
 		return c.Status(http.StatusBadRequest).JSON(handlers.GetHTTPMsg(http.StatusBadRequest))
 	}
-	// log.Printf("payload: %#v\n", &payload)
 
-	// Merge payload to current data
-	// TODO Optimize to map fields automatically
-	data.Name = payload.Name
-	data.Content = payload.Content
-	data.Excerpt = payload.Excerpt
+	// Map and Merge
+	{
+		pv := reflect.ValueOf(&payload).Elem()
+		dv := reflect.ValueOf(&data).Elem()
+		typ := dv.Type()
+
+		for i := 0; i < typ.NumField(); i++ {
+			f := typ.Field(i)
+			// Keep only necessary fields
+			if (f.Anonymous && f.Type.Name() == "Model") ||
+				f.Name == "UUID" {
+				continue
+			}
+			src := pv.Field(i)
+			dst := dv.Field(i)
+			if dst.CanSet() && src.Type() == dst.Type() {
+				dst.Set(src)
+			}
+		}
+	}
 
 	// Start transaction
 	tx := drivers.DBClient.Begin()
@@ -220,14 +288,21 @@ func UpdateOne(c fiber.Ctx) error {
 }
 
 func DeleteOne(c fiber.Ctx) error {
-	var id = c.Params("id")
-	if id == "" {
-		log.Print("DeleteOne: failed to parse request id")
-		return c.Status(http.StatusBadRequest).JSON(handlers.GetHTTPMsg(http.StatusBadRequest))
-	}
-	log.Printf("Delete: id=%s\n", id)
+	id := c.Params("id")
+	log.Printf("DeleteOne: id=%s\n", id)
 
-	filter := map[string]any{"ID": id}
+	acRequirement := middlewares.ACRequirement{
+		Roles: []string{"adminer"},
+		Permissions: []string{
+			ModelName + "::delete::self",
+		},
+	}
+	if err := middlewares.TryAC(c, acRequirement); err != nil {
+		log.Printf("🛑 TryAC failed: %v", err)
+		return err
+	}
+
+	filter := map[string]any{"id": id}
 
 	// Lookup Target
 	var data models.Post
