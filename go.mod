@@ -1,6 +1,6 @@
 module app
 
-go 1.25.1
+go 1.25.3
 
 require (
 	github.com/InfluxCommunity/influxdb3-go/v2 v2.10.0

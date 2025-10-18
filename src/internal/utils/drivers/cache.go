@@ -39,11 +39,11 @@ func ConnectCache() {
 // logOnCacheConnected 写日志：连接成功
 func logOnCacheConnected() {
 	if err := CacheSet("Cache connected", fmt.Sprintf("This is an auto generated message on cache connection succeed at %s", time.Now().Format(time.RFC3339)), 0); err != nil {
-		log.Printf("└ Failed to insert data: %v", err)
+		log.Printf("└ 🛑 Failed to insert data: %v", err)
 		return
 	}
 
-	log.Printf("└ Succeed to insert data key: %s", "Cache connected")
+	log.Printf("└ ✅ Succeed to insert data key: %s", "Cache connected")
 }
 
 func CacheSet(key string, value any, expiration time.Duration) error {
@@ -63,7 +63,7 @@ func CacheGet(key string) (string, error) {
 	if err == redis.Nil {
 		// log.Printf("key %s does not exist", key)
 	} else if err != nil {
-		// log.Printf("CacheGet error: %v", err)
+		log.Printf("🛑CacheGet error: %v", err)
 	} else {
 		// log.Printf("Got cache: for key %s, value is %v", key, value)
 	}

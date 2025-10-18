@@ -56,8 +56,8 @@ func logOnTSConnected() {
 	)
 
 	if err := TSClient.WritePoints(context.Background(), []*influxdb3.Point{point}); err != nil {
-		log.Printf("└ Failed to write point: %v", err)
+		log.Printf("└ 🛑 Failed to write point: %v", err)
 		return
 	}
-	log.Printf("└ Succeed to write point")
+	log.Printf("└ ✅ Succeed to write point")
 }
